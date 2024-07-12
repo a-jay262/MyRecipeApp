@@ -1,0 +1,186 @@
+/* Main container for the menu page */
+.menu-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #d2b48c; /* Light brown background */
+    height: 100%;
+    padding: 2rem;
+    animation: fadeIn 1.5s ease-in-out; /* Fade-in animation */
+  }
+  
+  /* Heading styling */
+  .menu-page h1 {
+    font-size: 2.5rem;
+    color: #3f1e06; /* Dark brown color */
+    margin-bottom: 2rem;
+    animation: slideDown 1s ease-in-out; /* Slide-down animation */
+  }
+  
+  /* Flex container for menu options */
+  .menu-options {
+    display: flex;
+    gap: 2rem; /* Space between options */
+    margin-top: 0rem;
+    flex-wrap: wrap; /* Wrap options on smaller screens */
+  }
+  
+  /* Individual menu option styling */
+  .menu-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Smooth scaling on hover */
+    border: 2px solid transparent; /* Add border to adjust on hover */
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  /* Image styling */
+  .menu-option img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+    animation: popUp 0.5s ease-in-out; /* Pop-up animation */
+  }
+  
+  /* Menu option label */
+  .menu-option span {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #3f1e06; /* Dark brown color */
+  }
+  
+  /* Hover effect for menu options */
+  .menu-option:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    border-color: #3f1e06; /* Change border color on hover */
+  }
+  
+  /* Keyframes for Animations */
+  
+  /* Fade-in effect */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Slide-down effect for heading */
+  @keyframes slideDown {
+    from {
+      transform: translateY(-50%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Pop-up effect for images */
+  @keyframes popUp {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Media Query for Responsive Design */
+  @media (max-width: 768px) {
+    .menu-options {
+      flex-direction: column;
+    }
+  
+    .menu-option {
+      margin-bottom: 1rem;
+    }
+  }
+
+
+  
+/* Modal container */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  
+  /* Modal content */
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    max-width: 90%;
+    text-align: center;
+    position: relative;
+  }
+  
+  /* Close button */
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #aaa;
+  }
+  
+  /* Input group containing buttons and input */
+  .input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  /* Recipe input field */
+  .recipe-input {
+    width: 80px; /* Adjust width as needed */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  
+  /* Buttons for increment and decrement */
+  .button-group button {
+    padding: 10px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #3f1e06; 
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .button-group button:hover {
+    background-color: #613f27;
+  }
+
+  
+    

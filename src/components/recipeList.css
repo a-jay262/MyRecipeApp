@@ -1,0 +1,45 @@
+.recipe-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .recipe-item {
+    border: 1px solid #ccc; /* Border style */
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+  }
+  
+  .cook-count {
+    margin-left: auto;
+  }
+
+
+.recipe-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .recipe-name {
+    flex-grow: 1;
+    margin-right: 10px;
+  }
+  
+  .cook-count {
+    margin-right: 10px;
+  }
+  
+  .favorite-icon {
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .favorite-icon svg {
+    vertical-align: middle;
+  }
+  
+  

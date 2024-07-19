@@ -1,0 +1,303 @@
+/* HomePage.css */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+body {
+  margin: 5px 5px;
+  font-family: "Poppins", Arial, sans-serif;
+  background-color: #e6f5e9;
+  width: 100vw; /* Sets the width to 100% of the viewport width */
+  height: 100vh;
+}
+
+
+.text-poppins {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.home-page2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px !important;
+  max-height: 800px !important;
+}
+
+.header2 {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5px;
+  margin-top: 5px !important;
+  align-items: left;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 0px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.profile-image1 {
+  width: 57px;
+  height: 55px;
+  border-radius: 50%;
+}
+
+.profile-score {
+  margin-left: 0px !important;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: lighter;
+}
+
+.search-row {
+  display: flex;
+}
+
+.search-bar-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 392px;
+  height: 58px;
+  margin: 10px 2px;
+  border-radius: 50px;
+  border: 1px solid #d9d9d9;
+  background-color: #d9d9d9;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  color: black;
+  pointer-events: none; /* Ensure the icon doesn't interfere with input focus */
+}
+
+.search-bar {
+  width: 292px;
+  height: 58px;
+  margin: 10px 0px;
+  border-radius: 50px;
+  border: 1px solid #d9d9d9;
+  background-color: #d9d9d9;
+}
+
+.search-bar::placeholder {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  text-align: center;
+}
+
+.filter-button {
+  background: none;
+  border: none;
+  margin: 10px 0px;
+  background-color: #d9d9d9;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  cursor: pointer;
+  align-items: center;
+}
+
+.filter-icon {
+  font-size: 24px;
+  color: black;
+}
+.famous-recipes {
+    width: 100%;
+    margin-top: 0px;
+  }
+  
+  .famous-recipes h2 {
+    margin-bottom: 10px;
+  }
+  
+  .famous-recipes2 {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .recipes {
+    display: flex;
+    gap: 10px;
+    justify-content: center; /* Center the .recipe items horizontally */
+  align-items: center;
+  }
+  
+  .recipe {
+    text-align: center;
+    flex: 1; /* Ensure each recipe container takes equal space */
+  }
+
+  .image-slider {
+    width: 210px;
+    height: 260px; /* Adjust height as needed */
+    overflow: hidden;
+    align-items:center;
+  }
+  
+  .slide {
+    width: 210px;
+    height: 260px; 
+    object-fit: cover;
+    transition: opacity 0.5s ease-in-out; /* Adjust opacity and duration as needed */
+  }
+  
+
+
+.recipe img {
+  width: 210px;
+  height: 260px;
+  border-radius: 10px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between; /* Change from space-around to space-between */
+  align-items: center; /* Center items vertically */
+  width: 100%;
+  padding-bottom: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  background-color: #e6f5e9;
+  position: fixed;
+  bottom: 0;
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.footer-button {
+  flex-shrink: 0; /* Prevent buttons from shrinking out of view */
+}
+
+.circle-cart-button,
+.circle-plus-button {
+  width: 57px; /* Adjust width and height as needed */
+  height: 57px; /* Make height equal to width for a perfect circle */
+  border-radius: 50%; /* Makes the button a circle */
+  background-color: #333; /* Adjust background color */
+  color: white; /* Adjust text color */
+  border: none; /* Remove border */
+  padding: 0; /* Remove default padding */
+  display: flex; /* Allow centering the icon */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  font-size: 1.5rem; /* Adjust font size of the icon */
+}
+
+
+
+
+.grocery {
+  background: #6db33f;
+}
+
+.recipe-list {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.recipe-list-button {
+  display: flex; /* Use flex to align text and icon */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center content horizontally */
+  background: #6db33f;
+  margin-top: 20px;
+  width: 200px;
+  height: 49px;
+  font-size: 20px;
+  color: white;
+  border: none;
+  padding: 0 20px; /* Adjust padding to fit text and icon */
+  border-radius: 30px;
+  cursor: pointer;
+  position: relative; /* Necessary for positioning the arrow */
+}
+
+.recipe-list-button i {
+  margin-left: 15px; /* Add space between text and arrow */
+  font-size: 1.5rem; 
+}
+
+.add-recipe {
+  background: #6db33f;
+}
+
+.category {
+  width: 100%;
+  margin-top: 0px !important;
+}
+
+.category h3 {
+  margin-bottom: 10px;
+}
+
+.category-images-container {
+  position: relative;
+  margin-top: 20px !important;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+}
+
+.category-images {
+  display: flex;
+  justify-content: space-around;
+  gap: -40px; /* Reduced gap between images */
+  width: calc(100% - 30px); /* Calculate width minus padding */
+}
+
+.category-images img {
+  width: 149px; /* Adjust initial image size */
+  height: 176px;
+  border-radius: 10px;
+}
+
+.profile-image {
+  width: 149px; /* Adjust initial image size */
+  height: 176px;
+  margin-right: 10px;
+  border-radius: 10px; /* Optional: Add rounded corners */
+  transition: transform 0.3s ease;
+}
+
+.profile-image.active {
+  width: 131px;
+  height: 149px;
+}
+
+.toggle-buttons {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-255%);
+  width: calc(100% - 0px); /* Align arrows within the padding */
+  display: flex;
+  justify-content: space-between;
+  left: 0px;
+  right: 0px;
+}
+
+.arrow-button {
+  background: none;
+  border: 1px;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333; /* Adjust arrow color */
+}
+
+.arrow-button:hover {
+  color: #000000; /* Adjust hover color */
+}

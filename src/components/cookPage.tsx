@@ -4,9 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { toggleRecipe } from "../reducers/recipeSlice";
 import { updateRecipeStepsOrder } from "../reducers/recipeSlice";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
-import './cookPage.css';
-import './recipe.css';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
+import "./cookPage.css";
+import { useNavigate } from "react-router-dom";
 
 interface Step {
   step: string;
@@ -23,12 +28,13 @@ interface Recipe {
   id: number;
   name: string;
   ingredients: Ingredients[];
-  steps: Step[]; 
+  steps: Step[];
   checked: boolean;
   cookCount: number;
 }
 
 const CookPage: React.FC = () => {
+  const navigate = useNavigate();
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const { id } = useParams<{ id: string }>();
 
@@ -51,7 +57,7 @@ const CookPage: React.FC = () => {
   const allStepsChecked = checkedSteps.every((checked) => checked);
 
   const handleCheckButton = () => {
-    alert('Congrats! You completed a recipe!');
+    alert("Congrats! You completed a recipe!");
     if (recipe) {
       dispatch(toggleRecipe({ id: recipe.id }));
     }
@@ -69,83 +75,110 @@ const CookPage: React.FC = () => {
     dispatch(updateRecipeStepsOrder({ id: recipe.id, reorderedSteps }));
   };
 
-  return (
-    <div className="page-container">
-      <h1>Cook Recipe {recipe?.id}</h1>
-      {recipe ? (
-        <div>
-          <h2>{recipe.name}</h2>
-      <h3>Serving Size: {recipe?.size}</h3>
-          
-          {/* Display Ingredients */}
-          <div className="recipe-ingredients">
-            <h4>Ingredients:</h4>
-            <ul>
-              {recipe.ingredients.map((ingredient, index) => (
-                <li key={index}>
-                  {ingredient.quantity} {ingredient.unit} - {ingredient.item}
-                </li>
-              ))}
-            </ul>
-          </div>
-              <h4>Steps to follow:</h4>
-          {/* Drag and Drop Steps */}
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="recipe-steps">
-              {(provided) => (
-                <ul className="recipe-steps-list" {...provided.droppableProps} ref={provided.innerRef}>
-                  {recipe.steps.map((step, index) => (
-                    <Draggable key={index} draggableId={`step-${index}`} index={index}>
-                      {(provided) => (
-                        <li
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          className="recipe-step-item"
-                        >
-                          <div className="step-content">
-                            <details className="step-details">
-                              <summary className="step-summary">{step.step}</summary>
-                              <p className="step-description">{step.des}</p>
-                            </details>
-                          </div>
-                          <input
-                            type="checkbox"
-                            id={`step-${index}`}
-                            className="step-checkbox"
-                            checked={checkedSteps[index]}
-                            onChange={() => handleStepCheck(index)}
-                          />
-                          <span {...provided.dragHandleProps} className="drag-handle">
-                            &#x2630;
-                          </span>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
+  const handleBack = () => {
+    navigate("/recipe-list");
+  };
 
-          {/* Complete Recipe Button */}
-          <div className="complete-recipe-container">
-            <button
-              className="complete-recipe-button"
-              type="button"
-              disabled={!allStepsChecked}
-              onClick={handleCheckButton}
-            >
-              Complete Recipe
-            </button>
-          </div>
+  return (
+    <div>
+      <div className="container">
+        <div className="button-container">
+          <button className="nav-button" onClick={handleBack}>
+            <span className="arrow-icon">&#8592;</span> {/* Left arrow icon */}
+          </button>
         </div>
-      ) : (
-        <div>Recipe not found!</div>
-      )}
+        <h4>Cook Recipe {recipe?.id}</h4>
+        <div className="overlay2">
+          {recipe ? (
+            <div>
+              <h4>{recipe.name}</h4>
+              <h4>Serving Size: {recipe?.size}</h4>
+
+              {/* Display Ingredients */}
+              <div className="recipe-ingredients">
+                <h4>Ingredients:</h4>
+                <ul className="recipe-list4">
+                  {recipe.ingredients.map((ingredient, index) => (
+                    <li key={index} className="recipe-item4">
+                      {ingredient.quantity} {ingredient.unit} -{" "}
+                      {ingredient.item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <h4>Steps to follow:</h4>
+              {/* Drag and Drop Steps */}
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="recipe-steps">
+                  {(provided) => (
+                    <ul
+                      className="recipe-steps-list"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {recipe.steps.map((step, index) => (
+                        <Draggable
+                          key={index}
+                          draggableId={`step-${index}`}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <li
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className="recipe-step-item"
+                            >
+                              <div className="step-content">
+                                <details className="step-details">
+                                  <summary className="step-summary">
+                                    {step.step}
+                                  </summary>
+                                  <p className="step-description">{step.des}</p>
+                                </details>
+                              </div>
+                              <input
+                                type="checkbox"
+                                id={`step-${index}`}
+                                className="step-checkbox"
+                                checked={checkedSteps[index]}
+                                onChange={() => handleStepCheck(index)}
+                                style={{ width: "20px", height: "20px" }}
+                              />
+                              <span
+                                {...provided.dragHandleProps}
+                                className="drag-handle"
+                              >
+                                &#x2630;
+                              </span>
+                            </li>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </ul>
+                  )}
+                </Droppable>
+              </DragDropContext>
+
+              {/* Complete Recipe Button */}
+              <div className="complete-recipe-container">
+                <button
+                  className="complete-recipe-button"
+                  type="button"
+                  disabled={!allStepsChecked}
+                  onClick={handleCheckButton}
+                >
+                  Complete Recipe
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>Recipe not found!</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
 export default CookPage;
-

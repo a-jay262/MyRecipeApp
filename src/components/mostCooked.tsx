@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { toggleFavorite } from "../reducers/recipeSlice";
 import "./recipeList.css";
-import "./recipe.css";
 import { useNavigate } from "react-router-dom";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; // Ant Design Icons
 

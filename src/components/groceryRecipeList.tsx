@@ -1,4 +1,3 @@
-// src/components/GroceryRecipeList.tsx
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -41,23 +40,37 @@ const GroceryRecipeList: React.FC = () => {
     navigate("/grocery-list", { state: { selectedRecipes, servingSize } });
   };
 
+  const handleBack = () => {
+    navigate("/menu");
+  };
+
   return (
-    <div>
-      <h1>Recipe List</h1>
-      <ul className="recipe-list">
-        {recipes.map((recipe) => (
-          <li key={recipe.id} className="recipe-item">
-            <input
-              type="checkbox"
-              checked={selectedRecipes.includes(recipe.id)}
-              onChange={() => handleCheckboxChange(recipe.id)}
-            />
-            <span className="recipe-name">{recipe.name}</span>
-          </li>
-        ))}
-      </ul>
+    <div className="container">
+      <div className="button-container">
+        <button className="nav-button" onClick={handleBack}>
+          <span className="arrow-icon">&#8592;</span> {/* Left arrow icon */}
+        </button>
+      </div>
+      <div className="overlay2">
+        <h4>Get Grocery</h4>
+        <ul className="recipe-list4">
+          {recipes.map((recipe) => (
+            <li key={recipe.id} className="recipe-item4">
+              <input
+                type="checkbox"
+                checked={selectedRecipes.includes(recipe.id)}
+                onChange={() => handleCheckboxChange(recipe.id)}
+                style={{ width: "20px", height: "20px" }} 
+                className="checkbox2"
+              />
+              <img src={recipe.image ?? undefined} alt={recipe.name} className="recipe-image4" />
+              <span className="recipe-name4">{recipe.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
       <button onClick={handleGetGroceryList} className="get-grocery-button">
-        Get Grocery List
+        Get Grocery
       </button>
 
       {dialogOpen && (
@@ -69,7 +82,7 @@ const GroceryRecipeList: React.FC = () => {
               <button type="button" onClick={handleDecrement}>- 5</button>
               <input
                 type="number"
-                className="recipe-input"
+                className="recipe-input4"
                 value={servingSize}
                 readOnly
               />

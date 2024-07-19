@@ -1,146 +1,192 @@
-.recipe-list {
-    list-style-type: none;
-    padding: 0;
-  }
+.container {
+  position: relative;
+  background-image: url('../assets/bg.jpg');
+  background-size: cover;
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 5px;
-    background-color: #d2b48c;
-  }
+.header4 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
 
-  input[type="checkbox"] {
-    transform: scale(1.5); /* Adjust the scale factor as needed */
-    margin-right: 10px; /* Adjust the spacing around the checkbox */
-    vertical-align: middle; /* Aligns the checkbox vertically with the text */
-  }
+h4 {
+  color: darkgreen; /* Change the color to dark green */
+  text-align: center; /* Center the heading horizontally */
+  font-size: 2em;
+  margin-top: 30px !important;
+  margin-bottom: 0px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-  h1 {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 3rem;
-    font-weight: 700;
-    color: #3f1e06;
-    display: flex;
-    text-align: center;
-    margin: 0;
-    padding: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1s ease-in-out;
-  }
-  
-  
-  .recipe-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .recipe-name {
-    margin-left: 10px;
-    flex-grow: 1;
-  }
-  
-  .get-grocery-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #a54519; /* Brownish color */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-left: 1170px;
-  }
-  
-  .get-grocery-button:hover {
-    background-color: #7b2b00;
-  }
-  
-  /* src/components/groceryList.css */
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  /* src/components/groceryRecipeList.css */
+.back-button {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: white;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: white;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.tab-menu {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background-color: #86ad56;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+}
+
+.tab.active {
+  background-color: white;
+  color: #86ad56;
+}
+
+.recipe-list4 {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px; /* Add space between heading and recipe list */
+  width: 80%; /* Ensure the list takes full width */
+}
+
+.recipe-item input[type="checkbox"] {
+  width: 20px; /* Adjust width as desired */
+  height: 20px; /* Adjust height as desired */
+  margin-right: 20px; /* Maintain spacing */
+}
+
+.checkbox2{
+  margin-right: 20px;
+}
+
+.recipe-item4 {
+  display: flex;
+  align-items: center;
+  background-color: rgba(204, 219, 169, 0.8);
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%; /* Ensure each item takes full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.recipe-image4 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.recipe-name4 {
+  font-size: 1rem;
+  color: #333;
+}
+
+.get-grocery-button {
+  background-color: #86ad56;
+  color: white;
+  padding: 15px;
+  border-radius: 20px;
+  border: none;
+  font-size: 1rem;
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px); /* Adjust width as needed */
+  max-width: 200px; /* Optional: set a max width */
+  text-align: center;
+}
+
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    position: relative;
-  }
-  
-  .close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  .input-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .input-group button {
-    background-color: #a54519;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
-  .input-group button:hover {
-    background-color: #7b2b00;
-  }
-  
-  .input-group input {
-    width: 60px;
-    text-align: center;
-    margin: 0 10px;
-    font-size: 18px;
-  }
-  
-  .button-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .button-group button {
-    background-color: #a54519;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
-  .button-group button:hover {
-    background-color: #7b2b00;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.input-group button {
+  background-color: #86ad56;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.recipe-input4 {
+  width: 50px;
+  text-align: center;
+  margin: 0 10px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.overlay2 {
+  position: absolute;
+  top: 20%; /* Start from the top */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  border-radius: 30px 30px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Start content at the top */
+  color: black;
+}

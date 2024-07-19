@@ -3,12 +3,11 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { toggleFavorite } from "../reducers/recipeSlice";
-import './recipeList.css';
-import "./recipe.css";
 import { useNavigate } from "react-router-dom";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; // Ant Design Icons
+import "./recipeList.css";
 
-const Favorities: React.FC = () => {
+const Favorites: React.FC = () => {
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const favorites = useSelector((state: RootState) => state.recipes.favorites);
   const dispatch = useDispatch();
@@ -21,44 +20,72 @@ const Favorities: React.FC = () => {
     navigate(`/cook/${id}`);
   };
 
+  const handleBack = () => {
+    navigate('/menu');
+  };
+
+  const handlelist = () => {
+    navigate('/recipe-list');
+  };
+
   const handleToggleFavorite = (id: number) => {
     dispatch(toggleFavorite(id));
   };
 
   return (
-    <div>
-      <h2>Favorites List</h2>
-      <ul className="recipe-list">
-        {favoriteRecipes.length > 0 ? (
-          favoriteRecipes.map((recipe) => (
-            <li key={recipe.id} className="recipe-item">
-              <span className="recipe-name">{recipe.name}</span>
-              <span className="cook-count">
-                Cooked: {recipe.cookCount} {recipe.cookCount === 1 ? "time" : "times"}
-              </span>
-              <button
-                className="recipe-button2"
-                onClick={() => handleCookToday(recipe.id)}
-              >
-                Cook Today
-              </button>
-              <span
-                className="favorite-icon"
-                onClick={() => handleToggleFavorite(recipe.id)}
-                role="button"
-                aria-label={favorites.includes(recipe.id) ? "Remove from favorites" : "Add to favorites"}
-                tabIndex={0}
-              >
-                {favorites.includes(recipe.id) ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
-              </span>
-            </li>
-          ))
-        ) : (
-          <p>No favorite recipes yet. Add some by clicking the heart icon!</p>
-        )}
-      </ul>
+    <div className="recipe-list-container">
+      <div className="header3">
+        <div className="button-container">
+          <button className="nav-button" onClick={handleBack}>
+            <span className="arrow-icon">&#8592;</span> {/* Left arrow icon */}
+          </button>
+        </div>
+        <div className="header-title">
+          <h2>Recipes that you have added and love to cook</h2>
+        </div>
+      </div>
+      <div className="overlay">
+        <div className="tab-container">
+          <button className="tab" onClick={handlelist}>Recipe List</button>
+          <button className="tab active">Favorites</button>
+        </div>
+        <ul className="recipe-list">
+          {favoriteRecipes.length > 0 ? (
+            favoriteRecipes.map((recipe) => (
+              <li key={recipe.id} className="recipe-item">
+                <img
+                  src={recipe.image ?? undefined}
+                  alt={recipe.name}
+                  className="recipe-image"
+                />
+                <div className="recipe-info">
+                  <span className="recipe-name">{recipe.name}</span>
+                </div>
+                <div className="cook-info">
+                  <span className="cook-count">
+                    Cooked: {recipe.cookCount}{" "}
+                    {recipe.cookCount === 1 ? "time" : "times"}
+                  </span>
+                  <span
+                    className="favorite-icon"
+                    onClick={() => handleToggleFavorite(recipe.id)}
+                  >
+                    {favorites.includes(recipe.id) ? (
+                      <AiFillHeart color="red" />
+                    ) : (
+                      <AiOutlineHeart />
+                    )}
+                  </span>
+                </div>
+              </li>
+            ))
+          ) : (
+            <p>No favorite recipes yet. Add some by clicking the heart icon!</p>
+          )}
+        </ul>
+      </div>
     </div>
   );
 };
 
-export default Favorities;
+export default Favorites;

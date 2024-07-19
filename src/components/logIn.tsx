@@ -1,22 +1,21 @@
-// src/components/Login.tsx
+// src/components/Signup.tsx
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-const Login: React.FC = () => {
-  const dispatch = useDispatch();
+const LogIn: React.FC = () => {
   const history = useNavigate();
   const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const handleLogin = () => {
-    
     history("/menu");
+    // Add logic to handle signup with username and password
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
+    <div className="signup-container">
+      <h2>Sign In</h2>
       <form>
         <label htmlFor="username">Username:</label>
         <input
@@ -25,15 +24,22 @@ const Login: React.FC = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <button type="button" onClick={handleLogin}>
-          Login
+          Sign In
         </button>
       </form>
       <p className="signup-link">
-        Don't have an account? <a href="/signup">Sign Up</a>
+        Don't have an account? <a href="/login">SignUp</a>
       </p>
     </div>
   );
 };
 
-export default Login;
+export default LogIn;

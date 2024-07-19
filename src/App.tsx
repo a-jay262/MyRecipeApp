@@ -5,7 +5,7 @@ import RecipeList from "./components/recipeList";
 import CookPage from "./components/cookPage";
 import EditRecipeForm from "./components/editRecipeForm";
 import EditRecipeList from "./components/editRecipeList";
-import MenuPage from "./components/Menu";
+import Menu2 from "./components/menu2";
 import HomePage from "./components/HomePage";
 import GroceryRecipeList from "./components/groceryRecipeList";
 import GroceryList from "./components/groceryList";
@@ -23,7 +23,6 @@ const App: React.FC = () => {
   return (
       <div>
         <Router>
-          <NavBar/>
                   <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/most-cooked" element={<MostCooked />} />
@@ -31,7 +30,7 @@ const App: React.FC = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/add-recipe" element={<RecipeForm />} />
             <Route path="/recipe-list" element={<RecipeList />} />
-            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/menu" element={<Menu2 />} />
             <Route path="/grocery-recipe-list" element={<GroceryRecipeList />} />
             <Route path="/grocery-list" element={<GroceryList />} />
             <Route path="/favorities" element={<Favorities />} />

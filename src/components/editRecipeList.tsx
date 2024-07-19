@@ -3,7 +3,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import './recipeList.css';
-import "./recipe.css";
 import {useNavigate} from "react-router-dom";
 
 const RecipeList: React.FC = () => {

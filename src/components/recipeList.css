@@ -1,45 +1,182 @@
-.recipe-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .recipe-item {
-    border: 1px solid #ccc; /* Border style */
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-    display: flex;
-    align-items: center;
-  }
-  
-  .cook-count {
-    margin-left: auto;
-  }
+.recipe-list-container {
+  position: relative;
+  background-image: url("../assets/bg.jpg");
+  background-size: cover;
+  padding: 20px;
+  background-repeat: no-repeat;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  height: 100vh; /* Make sure it takes the full viewport height */
+}
 
+@media (max-width: 768px) {
+  .recipe-list-container {
+    background-size: 400%; /* Zoom the image */
+    background-position: center center; /* Center the image */
+  }
+}
+
+.header-title {
+  position: relative;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 230px; /* Adjust as needed */
+}
+
+.header-title h2 {
+  position: relative;
+  color: black;
+  z-index: 2;  /* Ensure text is on top of the background */
+  margin: 0;
+  padding: 7px 10px;  /* Adjust padding for desired content size */
+}
+
+.header-title::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  padding: 15px 25px;  /* Adjust padding to match h2 padding and create space */
+  background-color: rgba(172, 167, 167, 0.9); /* Adjust opacity as desired */
+}
+
+/* Center the text within the h2 element */
+.header-title h2 {
+  text-align: center;  /* Horizontally center the text */
+}
+.overlay {
+  position: absolute;
+  top: 40%;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  border-radius: 30px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: black;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.header3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000; /* Adjust as needed */
+}
+
+.nav-button {
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.arrow-icon {
+  /* Adjust font-size and color as needed */
+  font-size: 30px;
+  color: white;
+  font-style: bold;
+}
+
+.tab-container {
+  margin-top: 3px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  background-color: rgb(175, 174, 174);
+  padding: 10px;
+  border-radius: 30px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 25px;
+  background: #8fbc8f; /* Green color */
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.tab.active {
+  background: #6b8e23; /* Lighter green for active tab */
+}
+
+.recipe-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+  flex: 1;
+  overflow-y: auto;
+}
 
 .recipe-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .recipe-name {
-    flex-grow: 1;
-    margin-right: 10px;
-  }
-  
-  .cook-count {
-    margin-right: 10px;
-  }
-  
-  .favorite-icon {
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  
-  .favorite-icon svg {
-    vertical-align: middle;
-  }
-  
-  
+  display: flex;
+  align-items: center;
+  background: rgba(144, 185, 154, 0.8);
+  border-radius: 30px;
+  margin: 10px 0;
+  padding: 10px;
+  color: black;
+}
+
+.recipe-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.recipe-info {
+  flex: 1;
+}
+
+.recipe-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.recipe-subtitle {
+  font-size: 14px;
+  color: gray;
+}
+
+.cook-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cook-count {
+  font-size: 14px;
+}
+
+.favorite-icon {
+  cursor: pointer;
+  font-size: 24px;
+  margin-top: 5px;
+}

@@ -6,7 +6,6 @@ import { updateRecipeStepsOrder } from "../reducers/recipeSlice";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import React, { useState, useEffect } from "react";
 import './cookPage.css';
-import './recipe.css';
 
 const CookPageSize: React.FC = () => {
     const recipes = useSelector((state: RootState) => state.recipes.recipes);

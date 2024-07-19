@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { RootState } from "../store/store";
 import { editRecipe } from "../reducers/recipeSlice";
-import "./recipe.css";
 import "./recipeForm.css";
 
 interface Step {
@@ -26,6 +25,8 @@ const EditRecipeForm: React.FC = () => {
   const [ingredients, setIngredients] = useState<Ingredients[]>([
     { item: "", quantity: 0, unit: "" },
   ]);
+  const [image, setImage] = useState<string | null>(null); 
+  const [category, setCategory] = useState("");
 
   const handleNewUnit = (index: number, value: string) => {
     if (!availableUnits.includes(value)) {
@@ -69,6 +70,10 @@ const EditRecipeForm: React.FC = () => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategory(e.target.value);
   };
 
 
@@ -133,17 +138,39 @@ const EditRecipeForm: React.FC = () => {
       return;
     }
     const recipeId = parseInt(id, 10);
-    dispatch(editRecipe({ id: recipeId, name, steps, ingredients }));
+    dispatch(editRecipe({ id: recipeId, name, steps, ingredients, category, image }));
     alert("Recipe Updated Successfully!");
     setName("");
     setIngredients([{ item: "", quantity: 0, unit: "" }]);
     setSteps([{ step: "", des: "" }]);
   };
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Convert image to base64 or upload to image hosting service
+      // Example using base64 (for demonstration, not recommended for production):
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="background">
       <h1>Edit Recipe:</h1>
       <form className="recipe-form" onSubmit={handleSubmit}>
+      <input
+          type="text"
+          className="recipe-input"
+          placeholder="Category"
+          value={category}
+          onChange={handleCategoryChange}
+          required
+          style={{ width: '400px' }}
+        />
         <input
           type="text"
           className="recipe-input"
@@ -153,6 +180,7 @@ const EditRecipeForm: React.FC = () => {
           required
           style={{ width: '400px' }}
         />
+      <input type="file" onChange={handleImageChange} />
         {ingredients.map((ing, index) => (
           <div key={index} className="step-container">
             <input

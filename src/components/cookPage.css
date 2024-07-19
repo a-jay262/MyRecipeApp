@@ -9,13 +9,16 @@
   .recipe-steps-list {
     list-style-type: none;
     padding: 0;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .recipe-step-item {
     border: 1px solid #ccc;
     margin-bottom: 10px;
     padding: 10px;
-    background-color: #d2b48c;
+    background-color: rgba(204, 219, 169, 0.8);
     display: flex;
     align-items: center;
   }
@@ -33,7 +36,7 @@
   }
   
   .step-checkbox {
-    margin-right: 10px;
+    margin-right: 20px;
   }
   
   .drag-handle {
@@ -43,18 +46,18 @@
   
   .complete-recipe-button {
     padding: 10px 20px;
-    font-size: 16px;
-    background-color: #a54519; 
+    font-size: 12px;
+    background-color: #224e05; 
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: auto;
+    margin-left: calc(50% + 40px);
   }
   
   
   .complete-recipe-button:disabled {
-    background-color: #ccc;
+    background-color: #aaaaaa;
     cursor: not-allowed;
   }
   

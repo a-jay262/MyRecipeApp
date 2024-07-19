@@ -18,6 +18,8 @@ export interface Recipe {
   size: number;
   ingredients: Ingredients[];
   steps: Step[]; 
+  category: string;
+  image: string | null; // We'll store the image URL as a string
   checked: boolean;
   cookCount: number;
 }
@@ -38,8 +40,8 @@ const recipeSlice = createSlice({
   name: 'recipes',
   initialState,
   reducers: {
-    addRecipe: (state, action: PayloadAction<{ name: string; size: number; steps: Step[], ingredients: Ingredients[] }>) => {
-      const { name, size, steps, ingredients } = action.payload;
+    addRecipe: (state, action: PayloadAction<{ name: string; size: number; steps: Step[], ingredients: Ingredients[], category: string, image: string | null; }>) => {
+      const { name, size, steps, ingredients, category, image } = action.payload;
     
       // Determine the new id for the recipe
       const maxId = state.recipes.reduce((max, recipe) => Math.max(recipe.id, max), 0);
@@ -52,21 +54,20 @@ const recipeSlice = createSlice({
         size,
         ingredients,
         steps,
+        category,
+        image,
         checked: false,
         cookCount: 0,
       };
     
       // Return a new state object with the new recipe added
-      return {
-        ...state,
-        recipes: [...state.recipes, newRecipe],
-      };
+      state.recipes.push(newRecipe);
     },    
     editRecipe: (
       state,
-      action: PayloadAction<{ id: number; name: string; steps: Step[], ingredients: Ingredients[] }>
+      action: PayloadAction<{ id: number; name: string; steps: Step[], ingredients: Ingredients[], category: string, image: string | null }>
     ) => {
-      const { id, name, steps, ingredients } = action.payload;
+      const { id, name, steps, ingredients, category, image } = action.payload;
       
       const recipeIndex = state.recipes.findIndex(recipe => recipe.id === id);
       if (recipeIndex !== -1) {
@@ -75,6 +76,8 @@ const recipeSlice = createSlice({
           name,
           steps,
           ingredients,
+          category,
+          image,
         };
       }
     },

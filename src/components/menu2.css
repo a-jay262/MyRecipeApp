@@ -9,6 +9,55 @@ body {
   height: 100vh;
 }
 
+.recipe-image2 {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.search-bar-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Position below the search bar */
+  left: 0;
+  width: 100%;
+  background-color: rgb(184, 182, 182);
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-item h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.dropdown-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
 
 .text-poppins {
   font-family: "Poppins", sans-serif;
@@ -87,6 +136,9 @@ body {
 
 .search-bar {
   width: 292px;
+  box-sizing: border-box;
+  padding: 10px 60px; /* Adjust padding values as needed */
+  text-align: left;
   height: 58px;
   margin: 10px 0px;
   border-radius: 50px;

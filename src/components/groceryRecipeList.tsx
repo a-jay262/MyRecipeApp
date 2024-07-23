@@ -6,12 +6,12 @@ import './groceryRecipeList.css';
 
 const GroceryRecipeList: React.FC = () => {
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
-  const [selectedRecipes, setSelectedRecipes] = useState<number[]>([]);
+  const [selectedRecipes, setSelectedRecipes] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [servingSize, setServingSize] = useState<number>(5);
   const navigate = useNavigate();
 
-  const handleCheckboxChange = (id: number) => {
+  const handleCheckboxChange = (id: string) => {
     setSelectedRecipes((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((recipeId) => recipeId !== id)
@@ -48,22 +48,22 @@ const GroceryRecipeList: React.FC = () => {
     <div className="container">
       <div className="button-container">
         <button className="nav-button" onClick={handleBack}>
-          <span className="arrow-icon">&#8592;</span> {/* Left arrow icon */}
+          <span className="arrow-icon">&#8592;</span> 
         </button>
       </div>
       <div className="overlay2">
         <h4>Get Grocery</h4>
         <ul className="recipe-list4">
           {recipes.map((recipe) => (
-            <li key={recipe.id} className="recipe-item4">
+            <li key={recipe._id} className="recipe-item4">
               <input
                 type="checkbox"
-                checked={selectedRecipes.includes(recipe.id)}
-                onChange={() => handleCheckboxChange(recipe.id)}
+                checked={selectedRecipes.includes(recipe._id)}
+                onChange={() => handleCheckboxChange(recipe._id)}
                 style={{ width: "20px", height: "20px" }} 
                 className="checkbox2"
               />
-              <img src={recipe.image ?? undefined} alt={recipe.name} className="recipe-image4" />
+              <img src={`http://localhost:5000${recipe.image}`} alt={recipe.name} className="recipe-image4" />
               <span className="recipe-name4">{recipe.name}</span>
             </li>
           ))}

@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { toggleRecipe } from "../reducers/recipeSlice";
+import { useAppDispatch } from '../store/store'; 
 import { updateRecipeStepsOrder } from "../reducers/recipeSlice";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import React, { useState, useEffect } from "react";
@@ -11,7 +12,7 @@ const CookPageSize: React.FC = () => {
     const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const { id, servingSize } = useParams<{ id: string; servingSize: string }>();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const recipeId = id ? parseInt(id, 10) : undefined;
 
@@ -51,7 +52,7 @@ const CookPageSize: React.FC = () => {
   const handleCheckButton = () => {
     alert('Congrats! You completed a recipe!');
     if (recipe) {
-      dispatch(toggleRecipe({ id: recipe.id }));
+      dispatch(toggleRecipe(recipe._id ));
     }
   };
 
@@ -64,7 +65,7 @@ const CookPageSize: React.FC = () => {
     const [movedStep] = reorderedSteps.splice(result.source.index, 1);
     reorderedSteps.splice(result.destination.index, 0, movedStep);
 
-    dispatch(updateRecipeStepsOrder({ id: recipe.id, reorderedSteps }));
+    dispatch(updateRecipeStepsOrder({ id: recipe._id, reorderedSteps }));
   };
 
   const [adjustedIngredients, setAdjustedIngredients] = useState(recipe?.ingredients || []);

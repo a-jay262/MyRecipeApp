@@ -35,8 +35,8 @@ const navigate = useNavigate();
   const getGroceryList = () => {
     const ingredientsMap: Record<string, { quantity: number; unit: string }> = {};
 
-    selectedRecipes.forEach((id: number) => {
-      const recipe = recipes.find((r) => r.id === id);
+    selectedRecipes.forEach((id: string) => {
+      const recipe = recipes.find((r) => r._id === id);
       if (recipe) {
         const adjustedIngredients = adjustIngredientsForServingSize(recipe.ingredients, recipe.size, servingSize);
 
@@ -62,7 +62,7 @@ const navigate = useNavigate();
 
   
   const handleBack = () => {
-    navigate("/menu");
+    navigate("/grocery-recipe-list");
   };
 
   return (

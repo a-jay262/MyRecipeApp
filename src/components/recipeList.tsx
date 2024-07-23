@@ -1,21 +1,23 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from '../store/store'; 
 import { RootState } from "../store/store";
-import { toggleFavorite } from "../reducers/recipeSlice";
+import { toggleFavorite, fetchRecipes } from "../reducers/recipeSlice";
 import { useNavigate } from "react-router-dom";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; // Ant Design Icons
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import "./recipeList.css";
 
 const RecipeList: React.FC = () => {
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const favorites = useSelector((state: RootState) => state.recipes.favorites);
-  const checkedCount = useSelector(
-    (state: RootState) => state.recipes.checkedCount
-  );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleCookToday = (id: number) => {
+  useEffect(() => {
+    dispatch(fetchRecipes());
+  }, [dispatch]);
+
+  const handleCookToday = (id: string) => {
     navigate(`/cook/${id}`);
   };
 
@@ -27,7 +29,8 @@ const RecipeList: React.FC = () => {
     navigate('/favorities');
   };
 
-  const handleToggleFavorite = (id: number) => {
+  const handleToggleFavorite = (id: string, event: React.MouseEvent) => {
+    event.stopPropagation();
     dispatch(toggleFavorite(id));
   };
 
@@ -36,7 +39,7 @@ const RecipeList: React.FC = () => {
       <div className="header3">
         <div className="button-container">
           <button className="nav-button" onClick={handleBack}>
-            <span className="arrow-icon">&#8592;</span> {/* Left arrow icon */}
+            <span className="arrow-icon">&#8592;</span>
           </button>
         </div>
         <div className="header-title">
@@ -50,9 +53,9 @@ const RecipeList: React.FC = () => {
         </div>
         <ul className="recipe-list">
           {recipes.map((recipe) => (
-            <li key={recipe.id} className="recipe-item" onClick={() => handleCookToday(recipe.id)}>
+            <li key={recipe._id} className="recipe-item" onClick={() => handleCookToday(recipe._id)}>
               <img
-                src={recipe.image ?? undefined}
+                src={`http://localhost:5000${recipe.image}`}
                 alt={recipe.name}
                 className="recipe-image"
               />
@@ -66,9 +69,9 @@ const RecipeList: React.FC = () => {
                 </span>
                 <span
                   className="favorite-icon"
-                  onClick={() => handleToggleFavorite(recipe.id)}
+                  onClick={(event) => handleToggleFavorite(recipe._id, event)}
                 >
-                  {favorites.includes(recipe.id) ? (
+                    {recipe.favorites ? (
                     <AiFillHeart color="red" />
                   ) : (
                     <AiOutlineHeart />

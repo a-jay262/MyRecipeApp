@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { addRecipe } from "../reducers/recipeSlice";
 import "./recipeForm.css";
+import { useAppDispatch } from '../store/store'; 
 import { useNavigate } from "react-router-dom";
+import imageCompression from 'browser-image-compression';
 
 interface Step {
   step: string;
@@ -28,7 +29,7 @@ const RecipeForm: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSize(parseInt(e.target.value, 10));
@@ -87,18 +88,43 @@ const RecipeForm: React.FC = () => {
     newSteps[index].unit = value;
     setIngredients(newSteps);
   };
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+  
     if (file) {
-      // Convert image to base64 or upload to image hosting service
-      // Example using base64 (for demonstration, not recommended for production):
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const options = {
+          maxSizeMB: 0.009,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        };
+  
+        const compressedFile = await imageCompression(file, options);
+  
+        // Create a FormData object to send the file
+        const formData = new FormData();
+        formData.append('image', compressedFile);
+  
+        // Send the file to the backend
+        const response = await fetch('http://localhost:5000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error('Image upload failed.');
+        }
+  
+        const data = await response.json();
+        setImage(data.filePath); // Set the image URL path from the response
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
   };
+  
+  
 
   const handleDesChange = (index: number, value: string) => {
     const newDes = [...steps];
@@ -138,30 +164,36 @@ const RecipeForm: React.FC = () => {
   const handleBack = () => {
     navigate("/menu");
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      name &&
-      steps.every(
-        (step) => step.step.trim() !== "" && step.des.trim() !== ""
-      ) &&
-      size !== 0
-    ) {
-      dispatch(addRecipe({ name, size, ingredients, steps, category, image }));
-      alert("Recipe Added Successfully!");
-      setName("");
-      setSize(size2);
-      setIngredients([{ item: "", quantity: 1, unit: "" }]);
-      setSteps([{ step: "", des: "" }]);
-      setCategory("");
-      setImage(null);
+  
+    if (!name.trim()) {
+      alert("Please enter a recipe name.");
+      return;
     }
-    if (size === 0) {
-      alert("Enter Valid Serving Size");
+  
+    if (steps.some((step) => !step.step.trim() || !step.des.trim())) {
+      alert("Please complete all steps with valid descriptions.");
+      return;
     }
+  
+    if (size <= 0) {
+      alert("Enter a valid serving size greater than zero.");
+      return;
+    }
+  
+    dispatch(addRecipe({ name, size, ingredients, steps, category, image }));
+    alert("Recipe Added Successfully!");
+  
+    setName("");
+    setSize(1);
+    setIngredients([{ item: "", quantity: 1, unit: "" }]);
+    setSteps([{ step: "", des: "" }]);
+    setCategory("");
+    setImage(null);
   };
-
+  
+  
   const handleIncrement = () => {
     setSize((prevSize) => prevSize + 5);
   };

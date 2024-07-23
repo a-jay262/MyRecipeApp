@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { toggleFavorite } from "../reducers/recipeSlice";
 import "./recipeList.css";
+import { useAppDispatch } from '../store/store'; 
 import { useNavigate } from "react-router-dom";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; // Ant Design Icons
 
@@ -10,14 +11,14 @@ const RecipeList: React.FC = () => {
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const favorites = useSelector((state: RootState) => state.recipes.favorites);
   const checkedCount = useSelector((state: RootState) => state.recipes.checkedCount);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleCookToday = (id: number) => {
     navigate(`/cook/${id}`);
   };
 
-  const handleToggleFavorite = (id: number) => {
+  const handleToggleFavorite = (id: string) => {
     dispatch(toggleFavorite(id));
   };
 
@@ -45,9 +46,9 @@ const RecipeList: React.FC = () => {
             </button>
             <span
               className="favorite-icon"
-              onClick={() => handleToggleFavorite(recipe.id)}
+              onClick={() => handleToggleFavorite(recipe._id)}
             >
-              {favorites.includes(recipe.id) ? (
+              {favorites.includes(recipe._id) ? (
                 <AiFillHeart color="red" />
               ) : (
                 <AiOutlineHeart />

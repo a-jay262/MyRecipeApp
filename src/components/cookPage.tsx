@@ -1,17 +1,11 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store/store";
-import { toggleRecipe } from "../reducers/recipeSlice";
-import { updateRecipeStepsOrder } from "../reducers/recipeSlice";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { RootState, useAppDispatch } from "../store/store";
+import { toggleRecipe, updateRecipeStepsOrder, fetchRecipes } from "../reducers/recipeSlice";
+import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import "./cookPage.css";
-import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../store/store";
 
 interface Step {
   step: string;
@@ -25,6 +19,7 @@ interface Ingredients {
 }
 
 interface Recipe {
+  _id: number;
   id: number;
   name: string;
   ingredients: Ingredients[];
@@ -37,12 +32,18 @@ const CookPage: React.FC = () => {
   const navigate = useNavigate();
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const { id } = useParams<{ id: string }>();
-
   const dispatch = useDispatch();
+  const dispatch2 = useAppDispatch();
+  
+  const recipeId = id;
 
-  const recipeId = id ? parseInt(id, 10) : undefined;
 
-  const recipe = recipes.find((recipe) => recipe.id === recipeId);
+  const recipe = recipes.find((recipe) => recipe._id === recipeId);
+
+  useEffect(() => {
+    dispatch2(fetchRecipes());
+    alert(`/recipeId/${recipeId}`);
+}, [ dispatch2]);
 
   const [checkedSteps, setCheckedSteps] = useState<boolean[]>(() =>
     recipe ? new Array(recipe.steps.length).fill(false) : []
@@ -50,7 +51,7 @@ const CookPage: React.FC = () => {
 
   const handleStepCheck = (index: number) => {
     const newCheckedSteps = [...checkedSteps];
-    newCheckedSteps[index] = !checkedSteps[index];
+    newCheckedSteps[index] = !newCheckedSteps[index];
     setCheckedSteps(newCheckedSteps);
   };
 
@@ -59,7 +60,7 @@ const CookPage: React.FC = () => {
   const handleCheckButton = () => {
     alert("Congrats! You completed a recipe!");
     if (recipe) {
-      dispatch(toggleRecipe({ id: recipe.id }));
+      dispatch2(toggleRecipe(recipe._id)); // Pass the payload as an object
     }
   };
 
@@ -72,7 +73,7 @@ const CookPage: React.FC = () => {
     const [movedStep] = reorderedSteps.splice(result.source.index, 1);
     reorderedSteps.splice(result.destination.index, 0, movedStep);
 
-    dispatch(updateRecipeStepsOrder({ id: recipe.id, reorderedSteps }));
+    dispatch(updateRecipeStepsOrder({ id: recipe._id, reorderedSteps }));
   };
 
   const handleBack = () => {
@@ -87,12 +88,12 @@ const CookPage: React.FC = () => {
             <span className="arrow-icon">&#8592;</span> {/* Left arrow icon */}
           </button>
         </div>
-        <h4>Cook Recipe {recipe?.id}</h4>
+        <h4>Cook Recipe</h4>
         <div className="overlay2">
           {recipe ? (
             <div>
               <h4>{recipe.name}</h4>
-              <h4>Serving Size: {recipe?.size}</h4>
+              <h4>Serving Size: {recipe.size}</h4>
 
               {/* Display Ingredients */}
               <div className="recipe-ingredients">
@@ -100,8 +101,7 @@ const CookPage: React.FC = () => {
                 <ul className="recipe-list4">
                   {recipe.ingredients.map((ingredient, index) => (
                     <li key={index} className="recipe-item4">
-                      {ingredient.quantity} {ingredient.unit} -{" "}
-                      {ingredient.item}
+                      {ingredient.quantity} {ingredient.unit} - {ingredient.item}
                     </li>
                   ))}
                 </ul>
@@ -119,7 +119,7 @@ const CookPage: React.FC = () => {
                       {recipe.steps.map((step, index) => (
                         <Draggable
                           key={index}
-                          draggableId={`step-${index}`}
+                          draggableId={`${recipe._id}-${index}`} // Ensure unique draggableId
                           index={index}
                         >
                           {(provided) => (
@@ -138,7 +138,7 @@ const CookPage: React.FC = () => {
                               </div>
                               <input
                                 type="checkbox"
-                                id={`step-${index}`}
+                                id={`${recipe._id}-${index}`}
                                 className="step-checkbox"
                                 checked={checkedSteps[index]}
                                 onChange={() => handleStepCheck(index)}

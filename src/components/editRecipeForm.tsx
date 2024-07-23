@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { RootState } from "../store/store";
 import { editRecipe } from "../reducers/recipeSlice";
 import "./recipeForm.css";
+import { useAppDispatch } from '../store/store'; 
+
 
 interface Step {
   step: string;
@@ -18,7 +20,7 @@ interface Ingredients {
 
 const EditRecipeForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const [name, setName] = useState("");
   const [steps, setSteps] = useState<Step[]>([{ step: "", des: "" }]);
@@ -138,7 +140,7 @@ const EditRecipeForm: React.FC = () => {
       return;
     }
     const recipeId = parseInt(id, 10);
-    dispatch(editRecipe({ id: recipeId, name, steps, ingredients, category, image }));
+    dispatch(editRecipe(recipeId,{ id: recipeId, name, steps, ingredients, category, image }));
     alert("Recipe Updated Successfully!");
     setName("");
     setIngredients([{ item: "", quantity: 0, unit: "" }]);

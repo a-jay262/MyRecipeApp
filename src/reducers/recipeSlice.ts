@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../store/store';
+import axios from 'axios';
+import { AppThunk, RootState } from '../store/store';
 
 export interface Step {
   step: string;
@@ -13,109 +14,140 @@ export interface Ingredients {
 }
 
 export interface Recipe {
+  _id: string;
   id: number;
   name: string;
   size: number;
   ingredients: Ingredients[];
-  steps: Step[]; 
+  steps: Step[];
   category: string;
-  image: string | null; // We'll store the image URL as a string
+  image: string | null;
   checked: boolean;
   cookCount: number;
+  favorites: boolean; // Added favorite field
 }
 
 export interface RecipeState {
-  recipes: Recipe[]; 
-  favorites: number[];
-  checkedCount: number; 
+  recipes: Recipe[];
+  favorites: string[];
+  checkedCount: number;
+  searchQuery: string;
 }
 
 const initialState: RecipeState = {
   recipes: [],
   favorites: [],
   checkedCount: 0,
+  searchQuery: '',
 };
 
 const recipeSlice = createSlice({
   name: 'recipes',
   initialState,
   reducers: {
-    addRecipe: (state, action: PayloadAction<{ name: string; size: number; steps: Step[], ingredients: Ingredients[], category: string, image: string | null; }>) => {
-      const { name, size, steps, ingredients, category, image } = action.payload;
-    
-      // Determine the new id for the recipe
-      const maxId = state.recipes.reduce((max, recipe) => Math.max(recipe.id, max), 0);
-      const newRecipeId = maxId + 1;
-    
-      // Create a new recipe object
-      const newRecipe: Recipe = {
-        id: newRecipeId,
-        name,
-        size,
-        ingredients,
-        steps,
-        category,
-        image,
-        checked: false,
-        cookCount: 0,
-      };
-    
-      // Return a new state object with the new recipe added
-      state.recipes.push(newRecipe);
-    },    
-    editRecipe: (
-      state,
-      action: PayloadAction<{ id: number; name: string; steps: Step[], ingredients: Ingredients[], category: string, image: string | null }>
-    ) => {
-      const { id, name, steps, ingredients, category, image } = action.payload;
-      
-      const recipeIndex = state.recipes.findIndex(recipe => recipe.id === id);
-      if (recipeIndex !== -1) {
-        state.recipes[recipeIndex] = {
-          ...state.recipes[recipeIndex],
-          name,
-          steps,
-          ingredients,
-          category,
-          image,
-        };
-      }
-    },
-    updateRecipesOrder: (state, action: PayloadAction<Recipe[]>) => {
+    setRecipes: (state, action: PayloadAction<Recipe[]>) => {
       state.recipes = action.payload;
     },
-    toggleRecipe: (state, action: PayloadAction<{ id: number }>) => {
-      const recipe = state.recipes.find(r => r.id === action.payload.id);
-      if (recipe) {
-        if (!recipe.checked) {
-          recipe.checked = true;
-          state.checkedCount += 1;
-        }
-        recipe.cookCount += 1;
-      }
+    setFavorites: (state, action: PayloadAction<string[]>) => {
+      state.favorites = action.payload;
+    },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+    },
+    incrementCheckedCount: (state) => {
+      state.checkedCount += 1;
     },
     updateRecipeStepsOrder: (
       state,
-      action: PayloadAction<{ id: number; reorderedSteps: Step[] }>
+      action: PayloadAction<{ id: string; reorderedSteps: Step[] }>
     ) => {
       const { id, reorderedSteps } = action.payload;
-      const recipe = state.recipes.find((recipe) => recipe.id === id);
+      const recipe = state.recipes.find((recipe) => recipe._id === id);
       if (recipe) {
         recipe.steps = reorderedSteps;
       }
     },
-    toggleFavorite: (state, action: PayloadAction<number>) => {
-      const recipeId = action.payload;
-      if (state.favorites.includes(recipeId)) {
-        state.favorites = state.favorites.filter((id) => id !== recipeId);
-      } else {
-        state.favorites.push(recipeId);
+    toggleFavoriteState: (state, action: PayloadAction<string>) => {
+      const recipe = state.recipes.find((recipe) => recipe._id === action.payload);
+      if (recipe) {
+        recipe.favorites = !recipe.favorites;
       }
     },
   },
 });
 
-export const { addRecipe, updateRecipeStepsOrder, toggleRecipe, editRecipe, toggleFavorite } = recipeSlice.actions;
+export const {
+  setRecipes,
+  setFavorites,
+  setSearchQuery,
+  incrementCheckedCount,
+  updateRecipeStepsOrder,
+  toggleFavoriteState,
+} = recipeSlice.actions;
+
+export const fetchRecipes = (): AppThunk => async (dispatch) => {
+  try {
+    const response = await axios.get('http://localhost:5000/recipes');
+    dispatch(setRecipes(response.data));
+  } catch (error) {
+    console.error('Failed to fetch recipes:', error);
+  }
+};
+
+export const addRecipe = (recipeData: Omit<Recipe, '_id' | 'id' | 'checked' | 'cookCount' | 'favorites'>): AppThunk => async (dispatch) => {
+  try {
+    const response = await axios.post('http://localhost:5000/recipes', recipeData);
+    console.log('Response from server:', response);
+    dispatch(fetchRecipes());
+    console.log('Recipe data:', recipeData);
+    alert("Done");
+  } catch (error) {
+    console.error('Failed to add recipe:', error);
+  }
+};
+
+export const editRecipe = (id: number, recipeData: Partial<Recipe>): AppThunk => async (dispatch) => {
+  try {
+    await axios.put(`http://localhost:5000/recipes/${id}`, recipeData);
+    dispatch(fetchRecipes());
+  } catch (error) {
+    console.error('Failed to edit recipe:', error);
+  }
+};
+
+export const toggleRecipe = (id: string): AppThunk => async (dispatch) => {
+  try {
+    await axios.patch(`http://localhost:5000/recipes/${id}/toggle`);
+    dispatch(fetchRecipes());
+    dispatch(incrementCheckedCount());
+  } catch (error) {
+    console.error('Failed to toggle recipe:', error);
+  }
+};
+
+export const toggleFavorite = (id: string): AppThunk => async (dispatch) => {
+  try {
+    await axios.patch(`http://localhost:5000/recipes/${id}/favorite`);
+    dispatch(fetchRecipes());
+    dispatch(toggleFavoriteState(id));
+  } catch (error) {
+    console.error('Failed to toggle favorite:', error);
+  }
+};
+
+export const selectFilteredRecipes = (state: RootState) => {
+  const { recipes, searchQuery } = state.recipes;
+  if (!searchQuery) {
+    return recipes;
+  }
+  return recipes.filter((recipe) =>
+    recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    recipe.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    recipe.ingredients.some((ingredient) =>
+      ingredient.item.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+};
 
 export default recipeSlice.reducer;
 export const selectFavorites = (state: RootState) => state.recipes.favorites;

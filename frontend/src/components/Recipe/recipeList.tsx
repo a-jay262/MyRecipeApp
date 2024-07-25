@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from '../store/store'; 
-import { RootState } from "../store/store";
-import { toggleFavorite, fetchRecipes } from "../reducers/recipeSlice";
+import { useAppDispatch } from '../../store/store'; 
+import { RootState } from "../../store/store";
+import { toggleFavorite, fetchRecipes } from "../../reducers/recipeSlice";
 import { useNavigate } from "react-router-dom";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import "./recipeList.css";

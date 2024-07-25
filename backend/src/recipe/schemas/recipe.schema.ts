@@ -4,8 +4,6 @@ import { Prop, Schema as MongooseSchema, SchemaFactory } from '@nestjs/mongoose'
 export type RecipeDocument = Recipe & Document;
 
 
-
-
 @MongooseSchema()
 export class Step {
   @Prop()

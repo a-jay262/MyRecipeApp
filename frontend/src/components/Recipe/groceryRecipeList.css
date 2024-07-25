@@ -1,6 +1,6 @@
 .container {
   position: relative;
-  background-image: url('../assets/bg.jpg');
+  background-image: url('../../assets/bg.jpg');
   background-size: cover;
   height: 100vh;
   padding: 20px;

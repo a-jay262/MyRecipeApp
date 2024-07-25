@@ -4,6 +4,8 @@ import { RecipeModule } from './recipe/recipe.module'; // Ensure this path is co
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { FileUploadModule } from './recipe/files/file-upload.module';
+import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [
@@ -14,9 +16,12 @@ import { FileUploadModule } from './recipe/files/file-upload.module';
       serveRoot: '/uploads',
     }),
     FileUploadModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
+
+
 
 
 

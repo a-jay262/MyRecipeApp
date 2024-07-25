@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store/store";
-import { toggleRecipe } from "../reducers/recipeSlice";
-import { useAppDispatch } from '../store/store'; 
-import { updateRecipeStepsOrder } from "../reducers/recipeSlice";
+import { RootState } from "../../store/store";
+import { toggleRecipe } from "../../reducers/recipeSlice";
+import { useAppDispatch } from '../../store/store'; 
+import { updateRecipeStepsOrder } from "../../reducers/recipeSlice";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import React, { useState, useEffect } from "react";
 import './cookPage.css';

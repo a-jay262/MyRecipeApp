@@ -1,23 +1,23 @@
 // src/App.tsx
 import React from "react";
-import RecipeForm from "./components/recipeForm";
-import RecipeList from "./components/recipeList";
-import CookPage from "./components/cookPage";
-import EditRecipeForm from "./components/editRecipeForm";
-import EditRecipeList from "./components/editRecipeList";
-import Menu2 from "./components/menu2";
-import HomePage from "./components/HomePage";
-import GroceryRecipeList from "./components/groceryRecipeList";
-import GroceryList from "./components/groceryList";
-import RecipeListSize from "./components/recipeListSize";
-import "./components/HomePage.css";
+import RecipeForm from "./components/Recipe/recipeForm";
+import RecipeList from "./components/Recipe/recipeList";
+import CookPage from "./components/Recipe/cookPage";
+import EditRecipeForm from "./components/Recipe/editRecipeForm";
+import EditRecipeList from "./components/Recipe/editRecipeList";
+import Menu2 from "./components/Recipe/menu2";
+import HomePage from "./components/Recipe/HomePage";
+import GroceryRecipeList from "./components/Recipe/groceryRecipeList";
+import GroceryList from "./components/Recipe/groceryList";
+import RecipeListSize from "./components/Recipe/recipeListSize";
+import "./components/Recipe/HomePage.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import CookPageSize from "./components/cookPageSize";
-import Favorities  from "./components/favorities";
-import NavBar  from "./components/Navbar";
-import LogIn  from "./components/logIn";
-import SignUp from "./components/signUp";
-import MostCooked from "./components/mostCooked";
+import CookPageSize from "./components/Recipe/cookPageSize";
+import Favorities  from "./components/Recipe/favorities";
+import NavBar  from "./components/Recipe/Navbar";
+import LogIn  from "./components/Auth/logIn";
+import SignUp from "./components/Auth/signUp";
+import MostCooked from "./components/Recipe/mostCooked";
 
 const App: React.FC = () => {
   return (

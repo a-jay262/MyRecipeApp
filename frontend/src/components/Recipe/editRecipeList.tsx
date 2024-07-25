@@ -1,7 +1,7 @@
 // src/components/RecipeList.tsx
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import { RootState } from "../../store/store";
 import './recipeList.css';
 import {useNavigate} from "react-router-dom";
 

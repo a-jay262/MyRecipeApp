@@ -26,6 +26,18 @@
   color: #3a5f3d; /* Dark green text color */
 }
 
+.otp-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+
 .signup-container input {
   padding: 12px;
   font-size: 1em;

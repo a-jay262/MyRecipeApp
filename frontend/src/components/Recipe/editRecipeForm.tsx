@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { RootState } from "../store/store";
-import { editRecipe } from "../reducers/recipeSlice";
+import { RootState } from "../../store/store";
+import { editRecipe } from "../../reducers/recipeSlice";
 import "./recipeForm.css";
-import { useAppDispatch } from '../store/store'; 
+import { useAppDispatch } from '../../store/store'; 
 
 
 interface Step {

@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./menu2.css";
-import img1 from "../assets/food1.jpeg";
-import img2 from "../assets/food2.jpg";
-import img3 from "../assets/food3.jpg";
-import { useAppDispatch } from '../store/store'; 
+import img1 from "../../assets/food1.jpeg";
+import img2 from "../../assets/food2.jpg";
+import img3 from "../../assets/food3.jpg";
+import { useAppDispatch } from '../../store/store'; 
 import img4 from "../assets/g.jpeg";
 import {useNavigate} from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { setSearchQuery } from '../reducers/recipeSlice';
+import { setSearchQuery } from '../../reducers/recipeSlice';
 import { FaSearch, FaSlidersH } from "react-icons/fa";
-import { selectFilteredRecipes , fetchRecipes} from '../reducers/recipeSlice';
+import { selectFilteredRecipes , fetchRecipes} from '../../reducers/recipeSlice';
 import { useSelector } from 'react-redux';
-import {Recipe } from "../reducers/recipeSlice";
-import { RootState } from "../store/store";
+import {Recipe } from "../../reducers/recipeSlice";
+import { RootState } from "../../store/store";
 
 
 const Menu2: React.FC = () => {

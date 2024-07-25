@@ -1,6 +1,6 @@
 .recipe-list-container {
   position: relative;
-  background-image: url("../assets/bg.jpg");
+  background-image: url("../../assets/bg.jpg");
   background-size: cover;
   padding: 20px;
   background-repeat: no-repeat;

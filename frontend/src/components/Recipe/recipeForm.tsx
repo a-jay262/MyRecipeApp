@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { addRecipe } from "../reducers/recipeSlice";
+import { addRecipe } from "../../reducers/recipeSlice";
 import "./recipeForm.css";
-import { useAppDispatch } from '../store/store'; 
+import { useAppDispatch } from '../../store/store'; 
 import { useNavigate } from "react-router-dom";
 import imageCompression from 'browser-image-compression';
 

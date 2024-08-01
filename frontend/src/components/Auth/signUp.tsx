@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Signup.css";
+import Alert from "../Recipe/alert";
+
 
 const Signup: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -11,6 +13,8 @@ const Signup: React.FC = () => {
   const [otp, setOtp] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
   const [timeLeft, setTimeLeft] = useState<number>(60); // 1 minute countdown
+  const [alertText, setAlertText] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -36,12 +40,14 @@ const Signup: React.FC = () => {
       });
   
       if (response.data.success) {
-        alert(response.data.message);
+        setAlertText(response.data.message);
+        setShowAlert(true);
         setUserId(response.data.userId); // Store the userId for OTP verification
         setShowOtpDialog(true); // Show the OTP dialog
         setTimeLeft(60); // Start the countdown timer
       } else {
-        alert(response.data.message);
+        setAlertText(response.data.message);
+        setShowAlert(true);
       }
     } catch (error) {
       console.error("Signup error", error);
@@ -56,10 +62,12 @@ const Signup: React.FC = () => {
         otp,
       });
       if (response.data.success) {
-        alert(response.data.message);
+        setAlertText(response.data.message);
+        setShowAlert(true);
         window.location.href = "/menu"; // Redirect to another page
       } else {
-        alert(response.data.message);
+        setAlertText(response.data.message);
+        setShowAlert(true);
       }
     } catch (error) {
       console.error("OTP verification error", error);

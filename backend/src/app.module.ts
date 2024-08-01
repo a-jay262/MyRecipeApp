@@ -5,6 +5,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { FileUploadModule } from './recipe/files/file-upload.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatGateway } from './chat/chat.gateway';
+//import { ChatGateway } from './chat/chat.gateway';
 
 
 @Module({
@@ -18,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
     FileUploadModule,
     AuthModule,
   ],
+  providers: [ChatGateway],
 })
 export class AppModule {}
 

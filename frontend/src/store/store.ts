@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
-import recipeReducer from '../reducers/recipeSlice'; // Adjust the path as needed
+import recipeReducer from '../reducers/recipeSlice'; 
 import { useDispatch } from 'react-redux';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -12,7 +12,6 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   recipes: recipeReducer,
-  // Add other reducers here if needed
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -25,7 +25,9 @@
     "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.3.10",
+    "@nestjs/platform-socket.io": "^10.3.10",
     "@nestjs/serve-static": "^4.0.2",
+    "@nestjs/websockets": "^10.3.10",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -33,7 +35,8 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.14",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -65,8 +68,12 @@
       "json",
       "ts"
     ],
+    "preset": "ts-jest",
+    "testMatch": [
+      "**/*.test.ts",
+      "**/*.spec.ts"
+    ],
     "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },

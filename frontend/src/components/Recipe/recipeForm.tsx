@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { addRecipe } from "../../reducers/recipeSlice";
 import "./recipeForm.css";
-import { useAppDispatch } from '../../store/store'; 
+import { useAppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
+import { addRecipeToIndexedDB } from "../../indexedDB";
+import Alert from "./alert";
 
 interface Step {
   step: string;
@@ -21,15 +23,27 @@ const RecipeForm: React.FC = () => {
   const [size, setSize] = useState(5);
   const [size2, setSize2] = useState(5);
   const [steps, setSteps] = useState<Step[]>([{ step: "", des: "" }]);
+  const [alertText, setAlertText] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [imageType, setImageType] = useState("");
+    const [imageNull, setImageNull] = useState("");
   const [ingredients, setIngredients] = useState<Ingredients[]>([
     { item: "", quantity: 1, unit: "" },
   ]);
   const [image, setImage] = useState<string | null>(null);
   const [category, setCategory] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    console.log("showAlert:", showAlert); 
+    console.log("AlertText:", alertText); // Check the value after update
+    // Check the value after update
+  }, [showAlert]);
 
   const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSize(parseInt(e.target.value, 10));
@@ -88,43 +102,102 @@ const RecipeForm: React.FC = () => {
     newSteps[index].unit = value;
     setIngredients(newSteps);
   };
-  
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-  
+
+    
     if (file) {
+      setLoading(true);
       try {
         const options = {
           maxSizeMB: 0.009,
           maxWidthOrHeight: 1024,
           useWebWorker: true,
         };
-  
+
         const compressedFile = await imageCompression(file, options);
-  
-        // Create a FormData object to send the file
-        const formData = new FormData();
-        formData.append('image', compressedFile);
-  
-        // Send the file to the backend
-        const response = await fetch('http://localhost:5000/upload', {
-          method: 'POST',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error('Image upload failed.');
+
+        // Check online status
+        if (navigator.onLine) {
+          // Upload image to backend
+          const formData = new FormData();
+          formData.append("image", compressedFile);
+
+          const response = await fetch("http://localhost:5000/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Image upload failed.");
+          }
+
+          const data = await response.json();
+          setImage(data.filePath); // Set the image URL path from the response
+          //alert(`Online Image, ${data.filePath}`);
+          console.log("SHOW ALERT 2222", showAlert);
+          if (data.filePath != null) {
+            //setAlertText(`Online Image`);
+            setShowAlert(true);
+            setImageType(`Online Image`)
+          } else {
+            setImageNull(`Image is being null`);
+            setShowAlert(true);
+          }
+        } else {
+          // Convert image to Base64 for offline storage
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            const base64Image = reader.result as string;
+            setImage(base64Image); // Store Base64 image URL
+            //alert(`OFFLINE Image, ${base64Image}`);
+            if (base64Image != null) {
+              setImageType(`OFFLINE Image`);
+              setShowAlert(true);
+            } else {
+              setImageNull(`Image is being null`);
+              setShowAlert(true);
+            }
+
+            // Save image as part of the recipe in IndexedDB if offline
+            const recipeWithImage = {
+              ...{ name, size, ingredients, steps, category },
+              image: base64Image,
+            };
+            //await addRecipeToIndexedDB(recipeWithImage); // Use addRecipeToIndexedDB function
+          };
+          reader.readAsDataURL(compressedFile); // Convert to Base64
         }
-  
-        const data = await response.json();
-        setImage(data.filePath); // Set the image URL path from the response
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error("Error handling image:", error);
+      }finally {
+        setLoading(false);
+        if(imageType ===`OFFLINE Image`)
+        {
+          if(imageNull === `Image is being null`)
+          {
+            setAlertText("Offline Image is being null");
+          }
+          else{
+            setAlertText("Offline Image is being added");
+          }
+        }
+        else if(imageType ===`Online Image`){
+          if(imageNull === `Image is being null`)
+            {
+              setAlertText("Online Image is being null");
+            }
+            else{
+              setAlertText("Online Image is being added");
+            }
+        }
+        setShowAlert(true); // Show alert
       }
     }
   };
-  
-  
 
   const handleDesChange = (index: number, value: string) => {
     const newDes = [...steps];
@@ -164,27 +237,49 @@ const RecipeForm: React.FC = () => {
   const handleBack = () => {
     navigate("/menu");
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!name.trim()) {
-      alert("Please enter a recipe name.");
+      setAlertText("Please enter a recipe name.");
+      setShowAlert(true);
       return;
     }
-  
+
     if (steps.some((step) => !step.step.trim() || !step.des.trim())) {
-      alert("Please complete all steps with valid descriptions.");
+      //alert("Please complete all steps with valid descriptions.");
+      setAlertText("Please complete all steps with valid descriptions.");
+      setShowAlert(true);
       return;
     }
-  
+
     if (size <= 0) {
-      alert("Enter a valid serving size greater than zero.");
+      //alert("Enter a valid serving size greater than zero.");
+      setAlertText("Enter a valid serving size greater than zero.");
+      setShowAlert(true);
       return;
     }
-  
-    dispatch(addRecipe({ name, size, ingredients, steps, category, image }));
-    alert("Recipe Added Successfully!");
-  
+
+    const recipe = { name, size, ingredients, steps, category, image };
+    console.log("Recipe to be saved:", recipe); // Add this line to debug
+
+    if (!navigator.onLine) {
+      // Store recipe in IndexedDB if offline
+      await addRecipeToIndexedDB(recipe);
+      //alert("Recipe saved locally. It will be synced when you're back online.");
+      setAlertText(
+        "Recipe saved locally. It will be synced when you're back online."
+      );
+      setShowAlert(true);
+    } else {
+      // Dispatch to Redux store and sync with backend if online
+      dispatch(addRecipe(recipe));
+      setAlertText("Recipe Added Successfully!");
+      setShowAlert(true);
+      //alert("Recipe Added Successfully!");
+    }
+
     setName("");
     setSize(1);
     setIngredients([{ item: "", quantity: 1, unit: "" }]);
@@ -192,8 +287,7 @@ const RecipeForm: React.FC = () => {
     setCategory("");
     setImage(null);
   };
-  
-  
+
   const handleIncrement = () => {
     setSize((prevSize) => prevSize + 5);
   };
@@ -340,6 +434,18 @@ const RecipeForm: React.FC = () => {
           Add Recipe
         </button>
       </form>
+      {loading && (
+      <div className="loading-overlay">
+        <div className="loading-spinner">Loading...</div>
+      </div>
+    )}
+      {showAlert && (
+        <Alert
+          text={alertText}
+          closable={true}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 };

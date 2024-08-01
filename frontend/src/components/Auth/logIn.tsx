@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
+import Alert from "../Recipe/alert";
 
 const LogIn: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [alertText, setAlertText] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+
 
   const handleLogin = async () => {
     try {
@@ -18,13 +22,18 @@ const LogIn: React.FC = () => {
 
       if (response.data.success) {
         // Redirect to menu on successful login
-        alert("You're successfully signed in");
+        setAlertText("You're successfully signed in");
+        //setAlertText("Please complete all steps with valid descriptions.");
+        console.log("Signed in");
+        setShowAlert(true);
         navigate("/menu");
       } else {
         alert(response.data.message);// Show error message
       }
     } catch (error) {
-      alert("An error occurred during login. Please try again.");
+      setAlertText("An error occurred during login. Please try again.");
+      //setAlertText("Please complete all steps with valid descriptions.");
+      setShowAlert(true);
     }
   };
 
@@ -54,6 +63,13 @@ const LogIn: React.FC = () => {
       <p className="signup-link">
         Don't have an account? <a href="/signup">Sign Up</a>
       </p>
+      {showAlert && (
+        <Alert
+          text={alertText}
+          closable={true}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 };

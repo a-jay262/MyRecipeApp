@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../store/store';
-import { toggleFavorite, fetchRecipes, Recipe, BASE_URL } from '../reducers/recipeSlice';
+import { toggleFavorite, fetchRecipes, Recipe, BASE_URL, logout } from '../reducers/recipeSlice';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -28,7 +28,7 @@ type Props = {
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { userId } = route.params; 
+  const { userId } = route.params;
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const favorites = useSelector((state: RootState) => state.recipes.favorites);
   const dispatch = useAppDispatch();
@@ -40,38 +40,22 @@ const ProfileScreen: React.FC<Props> = ({ navigation, route }) => {
     Alert.alert('User ID', `The user ID is ${userId}`);
   }, [dispatch, userId]);
 
-  useEffect(() => {
-    if (userId) {
-      dispatch(fetchRecipes());
-    }
-  }, [dispatch, userId]);
-
-  useEffect(() => {
-    //console.log('Recipes:', recipes);
-    //console.log('Active Tab:', activeTab);
-    //console.log('Filtered Recipes:', filteredRecipes);
-    //console.log(`User ID to compare: ${userId}`);
-
-
-    dispatch(fetchRecipes());
-  }, [dispatch, userId]);
-  
   const filteredRecipes = recipes
-    .filter(recipe => {
-      //console.log('Filtering Recipe:', recipe);
-      //console.log(`Recipe Id: ${recipe.userId}`);
-
-      return recipe.userId === userId;
-    })
+    .filter(recipe => recipe.userId === userId)
     .filter(recipe => activeTab === 'favorites' ? recipe.favorites : true);
 
-    
   const handleToggleFavorite = (id: string) => {
     dispatch(toggleFavorite(id));
   };
 
   const handleRecipePress = (id: string) => {
     navigation.navigate('CookPage', { id });
+  };
+
+  const handleLogout = () => {
+    dispatch(logout()); // Call the logout action
+    // Optionally redirect to login screen
+    navigation.navigate('Home'); // Adjust to your route
   };
 
   const renderItem = ({ item }: { item: Recipe }) => (
@@ -130,6 +114,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation, route }) => {
           keyExtractor={item => item._id}
           contentContainerStyle={styles.listContainer}
         />
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -231,6 +221,18 @@ const styles = StyleSheet.create({
   tabText: {
     color: 'white',
     fontSize: 16,
+  },
+  logoutButton: {
+    backgroundColor: 'red',
+    padding: 5,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

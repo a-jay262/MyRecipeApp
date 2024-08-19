@@ -12,13 +12,14 @@ import {
   Modal,
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RootStackParamList} from '../navigation/AppNavigator';
 import ImagePicker, {
   Asset,
   launchImageLibrary,
 } from 'react-native-image-picker';
 import axios from 'axios';
-import { BASE_URL } from '../reducers/recipeSlice';
+import { BASE_URL, setTokenWithExpiration } from '../reducers/recipeSlice';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -177,20 +178,23 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
 
   const handleOtpSubmit = async () => {
     try {
-      //Alert.alert(`OTP to check before is: ${otp}`);
-      //Alert.alert(`ID to check before is: ${userId}`);
-
-      const response = await axios.post(
-        `${BASE_URL}/auth/verify`,
-        {
-          userId,
-          otp,
-        },
-      );
-      //Alert.alert(`OTP to check is: ${otp}`);
-
+      const response = await axios.post(`${BASE_URL}/auth/verify`, {
+        userId,
+        otp,
+      });
+  
       if (response.data.success) {
-        Alert.alert('Profile Pic', profilePicture);
+        const { token, expiresIn } = response.data;
+  
+        // Set the token and expiration time
+        await setTokenWithExpiration(token, expiresIn);
+  
+        // Store user information in AsyncStorage
+        await AsyncStorage.setItem('username', username);
+        await AsyncStorage.setItem('profilePicture', profilePicture || '');
+        await AsyncStorage.setItem('userId', userId || '');
+  
+        // Close the OTP dialog and navigate to the MenuScreen
         setShowOtpDialog(false);
         navigation.navigate('MenuScreen', {
           username: username,
@@ -198,17 +202,17 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           id: userId || '',
         });
       } else {
-        //Alert.alert('OTP Failed', response.data.message);
+        Alert.alert('OTP Failed', response.data.message);
       }
     } catch (error) {
       console.error('OTP verification error', error);
-      /*Alert.alert(
+      Alert.alert(
         'OTP Verification Error',
-        'There was an error verifying the OTP. Please try again.',
-      );*/
+        'There was an error verifying the OTP. Please try again.'
+      );
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity

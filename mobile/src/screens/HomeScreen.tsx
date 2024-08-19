@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../navigation/AppNavigator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -9,7 +10,37 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-const HomeScreen: React.FC<Props> = ({ navigation }) => {
+const HomeScreen: React.FC<Props> = ({navigation}) => {
+  const handleSignUp = async () => {
+    const token = await AsyncStorage.getItem('token');
+    if (token) {
+      const username = await AsyncStorage.getItem('username');
+      const profilePicture = await AsyncStorage.getItem('profilePicture');
+      const userId = await AsyncStorage.getItem('userId');
+      navigation.navigate('MenuScreen', {
+        username: username || '',
+        profilePicture: profilePicture || '',
+        id: userId || '', // Directly pass userId from response
+      }); // Redirect to MenuPage if token exists
+    } else {
+      navigation.navigate('SignUp'); // Redirect to LoginPage if no token
+    }
+  };
+  const handleLogIn = async () => {
+    const token = await AsyncStorage.getItem('token');
+    if (token) {
+      const username = await AsyncStorage.getItem('username');
+      const profilePicture = await AsyncStorage.getItem('profilePicture');
+      const userId = await AsyncStorage.getItem('userId');
+      navigation.navigate('MenuScreen', {
+        username: username || '',
+        profilePicture: profilePicture || '',
+        id: userId || '', // Directly pass userId from response
+      });// Redirect to MenuPage if token exists
+    } else {
+      navigation.navigate('LogIn'); // Redirect to LoginPage if no token
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -20,15 +51,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('SignUp')}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
         <Text style={styles.signInText}>
           Already have an account?{' '}
-          <Text style={styles.signInLink} onPress={() => navigation.navigate('LogIn')}>
+          <Text style={styles.signInLink} onPress={handleLogIn}>
             Sign In
           </Text>
         </Text>
@@ -72,7 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 25, // Rounded corners
     elevation: 3, // Shadow for Android
     shadowColor: '#000', // Shadow for iOS
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
   },

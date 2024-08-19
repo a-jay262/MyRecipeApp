@@ -106,7 +106,17 @@ export const {
 
 export const fetchRecipes = (): AppThunk => async (dispatch) => {
   try {
-    const response = await axios.get(`${BASE_URL}/recipes`);
+    const tokenExpired = await isTokenExpired();
+    if (tokenExpired) {
+      await dispatch(logout()); // Handle token expiration
+      return; // Exit the function to avoid making the API call
+    }
+    const token = await AsyncStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/recipes`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     dispatch(setRecipes(response.data));
   } catch (error) {
     console.error('Failed to fetch recipes:', error);
@@ -115,11 +125,28 @@ export const fetchRecipes = (): AppThunk => async (dispatch) => {
 
 export const syncRecipe = (recipeData: Partial<Recipe>): AppThunk => async (dispatch) => {
   try {
-    if (recipeData._id) {
-      await axios.put(`${BASE_URL}/recipes/${recipeData._id}`, recipeData);
-    } else {
-      await axios.post(`${BASE_URL}/recipes`, recipeData);
+    const tokenExpired = await isTokenExpired();
+    if (tokenExpired) {
+      await dispatch(logout()); // Handle token expiration
+      return; // Exit the function to avoid making the API call
     }
+    // Retrieve the token from AsyncStorage
+    const token = await AsyncStorage.getItem('token');
+
+    // Configure axios request headers
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    if (recipeData._id) {
+      // Update existing recipe
+      await axios.put(`${BASE_URL}/recipes/${recipeData._id}`, recipeData, { headers });
+    } else {
+      // Create new recipe
+      await axios.post(`${BASE_URL}/recipes`, recipeData, { headers });
+    }
+
+    // Fetch the updated list of recipes
     dispatch(fetchRecipes());
     console.log("Recipe Sync Success");
     dispatch(setAlert({ text: "Recipe synchronized successfully!", show: true }));
@@ -131,7 +158,21 @@ export const syncRecipe = (recipeData: Partial<Recipe>): AppThunk => async (disp
 
 export const addRecipe = (recipeData: Omit<Recipe, '_id' | 'id' | 'checked' | 'cookCount' | 'favorites'>): AppThunk => async (dispatch) => {
   try {
-    const response = await axios.post(`${BASE_URL}/recipes`, recipeData);
+    const tokenExpired = await isTokenExpired();
+    if (tokenExpired) {
+      await dispatch(logout()); // Handle token expiration
+      return; // Exit the function to avoid making the API call
+    }
+    // Retrieve the token from AsyncStorage
+    const token = await AsyncStorage.getItem('token');
+
+    // Configure axios request headers
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Add the recipe
+    await axios.post(`${BASE_URL}/recipes`, recipeData, { headers });
     dispatch(fetchRecipes());
     dispatch(setAlert({ text: "Recipe added successfully!", show: true }));
     //socket.emit('recipe-added', recipeData);
@@ -143,7 +184,19 @@ export const addRecipe = (recipeData: Omit<Recipe, '_id' | 'id' | 'checked' | 'c
 
 export const editRecipe = (id: number, recipeData: Partial<Recipe>): AppThunk => async (dispatch) => {
   try {
-    await axios.put(`${BASE_URL}/recipes/${id}`, recipeData);
+    const tokenExpired = await isTokenExpired();
+    if (tokenExpired) {
+      await dispatch(logout()); // Handle token expiration
+      return; // Exit the function to avoid making the API call
+    }
+    const token = await AsyncStorage.getItem('token');
+
+    await axios.put(`${BASE_URL}/recipes/${id}`, recipeData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     dispatch(fetchRecipes());
     dispatch(setAlert({ text: "Recipe updated successfully!", show: true }));
   } catch (error) {
@@ -152,9 +205,22 @@ export const editRecipe = (id: number, recipeData: Partial<Recipe>): AppThunk =>
   }
 };
 
+
 export const toggleRecipe = (id: string): AppThunk => async (dispatch) => {
   try {
-    await axios.patch(`${BASE_URL}/recipes/${id}/toggle`);
+    const tokenExpired = await isTokenExpired();
+    if (tokenExpired) {
+      await dispatch(logout()); // Handle token expiration
+      return; // Exit the function to avoid making the API call
+    }
+    const token = await AsyncStorage.getItem('token');
+
+    await axios.patch(`${BASE_URL}/recipes/${id}/toggle`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     dispatch(fetchRecipes());
     dispatch(incrementCheckedCount());
     dispatch(setAlert({ text: "Recipe toggled successfully!", show: true }));
@@ -164,9 +230,22 @@ export const toggleRecipe = (id: string): AppThunk => async (dispatch) => {
   }
 };
 
+
 export const toggleFavorite = (id: string): AppThunk => async (dispatch) => {
   try {
-    await axios.patch(`${BASE_URL}/recipes/${id}/favorite`);
+    const tokenExpired = await isTokenExpired();
+    if (tokenExpired) {
+      await dispatch(logout()); // Handle token expiration
+      return; // Exit the function to avoid making the API call
+    }
+    const token = await AsyncStorage.getItem('token');
+
+    await axios.patch(`${BASE_URL}/recipes/${id}/favorite`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     dispatch(fetchRecipes());
     dispatch(toggleFavoriteState(id));
     dispatch(setAlert({ text: "Favorite status toggled successfully!", show: true }));
@@ -175,6 +254,7 @@ export const toggleFavorite = (id: string): AppThunk => async (dispatch) => {
     dispatch(setAlert({ text: "Failed to toggle favorite.", show: true }));
   }
 };
+
 
 export const selectFilteredRecipes = (state: RootState) => {
   const { recipes, searchQuery } = state.recipes;
@@ -189,6 +269,35 @@ export const selectFilteredRecipes = (state: RootState) => {
     )
   );
 };
+
+export const logout = (): AppThunk => async (dispatch) => {
+  try {
+    await AsyncStorage.removeItem('token');
+    dispatch({ type: 'LOGOUT_SUCCESS' }); // Dispatch a Redux action to handle state change
+    console.log("Logged out successfully");
+    // Optionally redirect to login screen
+    // For React Native, use navigation
+    // For React web, use history or React Router's useNavigate
+  } catch (error) {
+    console.error('Failed to log out:', error);
+    dispatch({ type: 'LOGOUT_FAILURE' }); // Handle logout failure if needed
+  }
+};
+
+export const setTokenWithExpiration = async (token: string, expiresIn: number) => {
+  const expirationDate = new Date().getTime() + expiresIn * 1000; // Convert seconds to milliseconds
+  await AsyncStorage.setItem('token', token);
+  await AsyncStorage.setItem('tokenExpiration', expirationDate.toString());
+};
+
+const isTokenExpired = async () => {
+  const expiration = await AsyncStorage.getItem('tokenExpiration');
+  if (expiration) {
+    return new Date().getTime() > parseInt(expiration);
+  }
+  return true;
+};
+
 
 export const saveRecipeToLocal = async (recipe: Recipe) => {
   try {

@@ -5,28 +5,29 @@ import { User } from '../recipe/schemas/user.schema';
 import * as bcrypt from 'bcryptjs';
 import * as nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
+import { JwtService } from '@nestjs/jwt';  // Import JwtService
 
 @Injectable()
 export class AuthService {
-  private otpMap = new Map<string, { otp: string, expires: number, username: string, password: string, email: string , image: string}>();
+  private otpMap = new Map<string, { otp: string, expires: number, username: string, password: string, email: string, image: string }>();
 
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private jwtService: JwtService // Inject JwtService
+  ) {}
 
-  async signup(username: string, password: string, email: string, image:string): Promise<any> {
-    // Generate OTP and set expiration time
-    const otp = randomBytes(3).toString('hex'); // Generate a 6-digit OTP
-    const otpExpires = Date.now() + 60000; // OTP expires in 1 minute
+  async signup(username: string, password: string, email: string, image: string): Promise<any> {
+    const otp = randomBytes(3).toString('hex');
+    const otpExpires = Date.now() + 60000;
 
-    // Store user data and OTP temporarily
-    const userId = randomBytes(16).toString('hex'); // Generate a unique ID for temporary storage
-    this.otpMap.set(userId, { otp, expires: otpExpires, username, password: await bcrypt.hash(password, 10), email , image});
+    const userId = randomBytes(16).toString('hex');
+    this.otpMap.set(userId, { otp, expires: otpExpires, username, password: await bcrypt.hash(password, 10), email, image });
 
-    // Send OTP email
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
         user: 'alishba.javed792@gmail.com',
-        pass: 'jldj uhta vsji ukzs', // Replace with your generated App Password
+        pass: 'jldj uhta vsji ukzs',
       },
       port: 587,
       secure: false,
@@ -55,7 +56,6 @@ export class AuthService {
     if (otpData) {
       if (otpData.expires > Date.now()) {
         if (otpData.otp === otp) {
-          // Create user in database
           const user = new this.userModel({
             username: otpData.username,
             password: otpData.password,
@@ -64,11 +64,20 @@ export class AuthService {
             image: otpData.image,
           });
           await user.save();
-
-          // OTP is used, so delete it
+  
+          // Generate token with expiration
+          const expiresIn = '1h'; // Set token expiration time
+          const token = this.jwtService.sign({ userId: user._id }, { expiresIn });
+  
+          // Remove OTP data from the map
           this.otpMap.delete(userId);
-
-          return { success: true, message: 'Account successfully verified.' };
+  
+          return {
+            success: true,
+            message: 'Account successfully verified.',
+            token,
+            expiresIn, // Return expiration time
+          };
         }
         return { success: false, message: 'Invalid OTP.' };
       }
@@ -76,15 +85,17 @@ export class AuthService {
     }
     return { success: false, message: 'Invalid OTP or User ID.' };
   }
+  
 
   async login(email: string, password: string): Promise<any> {
-    // Find user by email
     const user = await this.userModel.findOne({ email });
     if (user && user.isVerified) {
-      // Compare provided password with stored hash
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        return { success: true, message: 'Login successful', userId: user._id.toString(), image: user.image, username: user.username };
+        const payload = { username: user.username, sub: user._id };
+        const accessToken = this.jwtService.sign(payload); // This line may be causing the issue
+        console.log("Logged In Successfull");
+        return { success: true, accessToken, username: user.username, image: user.image, userId: user._id.toString() };
       } else {
         return { success: false, message: 'Invalid password.' };
       }

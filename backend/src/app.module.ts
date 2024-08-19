@@ -6,6 +6,7 @@ import { join } from 'path';
 import { FileUploadModule } from './recipe/files/file-upload.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatGateway } from './chat/chat.gateway';
+import { EventsGateway } from './events.gateway'; 
 //import { ChatGateway } from './chat/chat.gateway';
 
 
@@ -20,7 +21,8 @@ import { ChatGateway } from './chat/chat.gateway';
     FileUploadModule,
     AuthModule,
   ],
-  providers: [ChatGateway],
+  //providers: [ChatGateway],
+  providers: [EventsGateway],
 })
 export class AppModule {}
 

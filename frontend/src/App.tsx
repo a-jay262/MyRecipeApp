@@ -19,7 +19,7 @@ import LogIn from "./components/Auth/logIn";
 import SignUp from "./components/Auth/signUp";
 import MostCooked from "./components/Recipe/mostCooked";
 import './components/Recipe/menu2.css';
-import socket from './socket'; // Import the Socket.IO client
+import socket from './socket'; 
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -35,10 +35,8 @@ const App: React.FC = () => {
       console.log('Received response:', data);
     });
 
-    // Emit a custom event
     socket.emit('customEvent', { message: 'Hello from client!' });
 
-    // Cleanup on component unmount
     return () => {
       socket.disconnect();
     };

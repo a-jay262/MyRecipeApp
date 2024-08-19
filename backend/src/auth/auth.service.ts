@@ -8,18 +8,18 @@ import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
-  private otpMap = new Map<string, { otp: string, expires: number, username: string, password: string, email: string }>();
+  private otpMap = new Map<string, { otp: string, expires: number, username: string, password: string, email: string , image: string}>();
 
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async signup(username: string, password: string, email: string): Promise<any> {
+  async signup(username: string, password: string, email: string, image:string): Promise<any> {
     // Generate OTP and set expiration time
     const otp = randomBytes(3).toString('hex'); // Generate a 6-digit OTP
     const otpExpires = Date.now() + 60000; // OTP expires in 1 minute
 
     // Store user data and OTP temporarily
     const userId = randomBytes(16).toString('hex'); // Generate a unique ID for temporary storage
-    this.otpMap.set(userId, { otp, expires: otpExpires, username, password: await bcrypt.hash(password, 10), email });
+    this.otpMap.set(userId, { otp, expires: otpExpires, username, password: await bcrypt.hash(password, 10), email , image});
 
     // Send OTP email
     const transporter = nodemailer.createTransport({
@@ -61,6 +61,7 @@ export class AuthService {
             password: otpData.password,
             email: otpData.email,
             isVerified: true,
+            image: otpData.image,
           });
           await user.save();
 
@@ -83,7 +84,7 @@ export class AuthService {
       // Compare provided password with stored hash
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        return { success: true, message: 'Login successful', userId: user._id.toString() };
+        return { success: true, message: 'Login successful', userId: user._id.toString(), image: user.image, username: user.username };
       } else {
         return { success: false, message: 'Invalid password.' };
       }

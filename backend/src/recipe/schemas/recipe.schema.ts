@@ -27,6 +27,9 @@ export class Ingredient {
 
 @MongooseSchema()
 export class Recipe {
+  @Prop({ required: true})
+  userId: string;
+
   @Prop()
   name: string;
 
@@ -47,6 +50,9 @@ export class Recipe {
 
   @Prop({ default: false })
   checked: boolean;
+
+  @Prop({ default: false })
+  public: boolean;
 
   @Prop({ default: 0 })
   cookCount: number;

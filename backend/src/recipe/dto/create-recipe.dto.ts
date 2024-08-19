@@ -4,6 +4,9 @@ import { Step, Ingredient } from '../schemas/recipe.schema';
 
 export class CreateRecipeDto {
   @IsString()
+  userId: string;
+
+  @IsString()
   name: string;
 
   @IsNumber()

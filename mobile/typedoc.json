@@ -1,0 +1,6 @@
+{
+    "entryPoints": ["App.tsx"],
+    "out": "docs",
+    "excludePrivate": true,
+    "excludeExternals": true
+  }

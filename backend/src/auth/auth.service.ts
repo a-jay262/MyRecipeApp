@@ -95,7 +95,7 @@ export class AuthService {
         const payload = { username: user.username, sub: user._id };
         const accessToken = this.jwtService.sign(payload); // This line may be causing the issue
         console.log("Logged In Successfull");
-        return { success: true, accessToken, username: user.username, image: user.image, userId: user._id.toString() };
+        return { success: true, accessToken, username: user.username, image: user.image, userId: user.id.toString() };
       } else {
         return { success: false, message: 'Invalid password.' };
       }

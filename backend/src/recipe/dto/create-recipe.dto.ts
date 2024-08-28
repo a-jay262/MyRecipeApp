@@ -12,6 +12,9 @@ export class CreateRecipeDto {
   @IsNumber()
   size: number;
 
+  @IsNumber()
+  price: number;
+
   @IsArray()
   ingredients: Ingredient[];
 

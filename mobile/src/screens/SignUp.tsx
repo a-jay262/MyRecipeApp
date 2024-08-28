@@ -19,7 +19,7 @@ import ImagePicker, {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import axios from 'axios';
-import { BASE_URL, setTokenWithExpiration } from '../reducers/recipeSlice';
+import { BASE_URL, setTokenWithExpiration, BASE_URL2 } from '../reducers/recipeSlice';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -38,6 +38,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [showOtpDialog, setShowOtpDialog] = useState(false);
   const [otp, setOtp] = useState('');
+  const [otp2, setOtp2] = useState('');
   const [image, setImage] = useState<Asset | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [forceUpdate, setForceUpdate] = useState(0); // Added to force re-render
@@ -157,9 +158,26 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
         },
       );
 
+      const userData = {
+        name: username,
+        email,
+        password,
+      };
+  
+      // Make the API call to sign up the user
+      const response2 = await fetch(`${BASE_URL2}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
       const userId2 = response.data.userId;
       //Alert.alert(`ID direct is: ${userId2}`);
-
+      if(response2.ok){
+        console.log("OTP sent");
+      }
       if (response.data.success) {
         //Alert.alert(`Sign Up Success ${response.data.message}`);
         setUserId(response.data.userId); // Store the userId for OTP verification
@@ -182,6 +200,18 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
         userId,
         otp,
       });
+
+      const response2 = await  fetch(`${BASE_URL2}/api/auth/verify-email`, { // Corrected endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, otp2 }),
+      });
+
+      if(response2.ok){
+        console.log("OTP SUCCESSS")
+      }
   
       if (response.data.success) {
         const { token, expiresIn } = response.data;
@@ -191,12 +221,14 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
   
         // Store user information in AsyncStorage
         await AsyncStorage.setItem('username', username);
+        await AsyncStorage.setItem('email', email);
         await AsyncStorage.setItem('profilePicture', profilePicture || '');
         await AsyncStorage.setItem('userId', userId || '');
   
         // Close the OTP dialog and navigate to the MenuScreen
         setShowOtpDialog(false);
         navigation.navigate('MenuScreen', {
+          email:email,
           username: username,
           profilePicture: profilePicture || '',
           id: userId || '',
@@ -270,7 +302,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
               onPress={() => setShowOtpDialog(false)}>
               <Text style={styles.closeButtonText}>x</Text>
             </TouchableOpacity>
-            <Text style={styles.otpText}>Enter OTP: </Text>
+            <Text style={styles.otpText}>Enter OTP 1: </Text>
             <TextInput
               style={styles.input}
               placeholder="OTP"
@@ -278,6 +310,15 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
               returnKeyType="done"
               value={otp}
               onChangeText={setOtp}
+            />
+            <Text style={styles.otpText}>Enter OTP 2: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="OTP"
+              keyboardType="default"
+              returnKeyType="done"
+              value={otp2}
+              onChangeText={setOtp2}
             />
             <Text style={styles.timerText}>Time Left: {timeLeft}s</Text>
             <TouchableOpacity style={styles.button} onPress={handleOtpSubmit}>

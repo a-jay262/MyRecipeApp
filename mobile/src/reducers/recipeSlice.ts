@@ -21,6 +21,7 @@ export interface Recipe {
   id: number;
   name: string;
   size: number;
+  price: number;
   ingredients: Ingredients[];
   steps: Step[];
   category: string;
@@ -49,7 +50,9 @@ const initialState: RecipeState = {
   showAlert: false,
 };
 
-export const BASE_URL = 'http://192.168.16.128:5000'; // Updated to use your development machine's IP address
+//export const BASE_URL = 'http://192.168.100.198:5000'; 
+export const BASE_URL2 = 'http://192.168.16.112:3000'; // Updated to use your development machine's IP address
+export const BASE_URL = 'https://c662-182-191-78-8.ngrok-free.app'; // Updated to use your development machine's IP address
 
 const recipeSlice = createSlice({
   name: 'recipes',
@@ -155,7 +158,11 @@ export const syncRecipe = (recipeData: Partial<Recipe>): AppThunk => async (disp
     dispatch(setAlert({ text: "Failed to synchronize recipe.", show: true }));
   }
 };
-
+/**
+ * 
+ * @param recipeData 
+ * @returns successfull when recipe is added
+ */
 export const addRecipe = (recipeData: Omit<Recipe, '_id' | 'id' | 'checked' | 'cookCount' | 'favorites'>): AppThunk => async (dispatch) => {
   try {
     const tokenExpired = await isTokenExpired();
@@ -298,27 +305,33 @@ const isTokenExpired = async () => {
   return true;
 };
 
-
-export const saveRecipeToLocal = async (recipe: Recipe) => {
+export const saveRecipesToLocal = async (recipes: Recipe[]) => {
   try {
-    const storedRecipes = await AsyncStorage.getItem('recipes');
-    const recipes = storedRecipes ? JSON.parse(storedRecipes) : [];
-    recipes.push(recipe);
     await AsyncStorage.setItem('recipes', JSON.stringify(recipes));
   } catch (error) {
-    console.error('Failed to save recipe:', error);
+    console.error('Failed to save recipes to local storage:', error);
   }
 };
 
-export const loadRecipesFromLocal = async () => {
+export const getRecipesFromLocal = async (): Promise<Recipe[]> => {
   try {
-    const storedRecipes = await AsyncStorage.getItem('recipes');
-    return storedRecipes ? JSON.parse(storedRecipes) : [];
+    const recipesString = await AsyncStorage.getItem('recipes');
+    return recipesString ? JSON.parse(recipesString) : [];
   } catch (error) {
-    console.error('Failed to load recipes:', error);
+    console.error('Failed to fetch recipes from local storage:', error);
     return [];
   }
 };
+
+export const syncDataWithServer = (): AppThunk => async (dispatch) =>{
+  const localRecipes = await getRecipesFromLocal();
+  if (localRecipes.length > 0) {
+    // Push local changes to the server
+    localRecipes.forEach(recipe => {
+      dispatch(addRecipe(recipe)); // Example function to add to server
+    });
+  }
+}
 
 export const selectAlert = (state: RootState) => ({
   text: state.recipes.alertText,

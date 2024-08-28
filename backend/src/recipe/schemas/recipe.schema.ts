@@ -25,6 +25,9 @@ export class Ingredient {
   unit: string;
 }
 
+/**
+ * Recipe Schema
+ */
 @MongooseSchema()
 export class Recipe {
   @Prop({ required: true})
@@ -35,6 +38,9 @@ export class Recipe {
 
   @Prop()
   size: number;
+
+  @Prop()
+  price: number;
 
   @Prop({ type: [{ type: Object }] })
   ingredients: Ingredient[];

@@ -17,16 +17,23 @@ import { RootState, useAppDispatch } from '../store/store';
 import { Recipe } from '../reducers/recipeSlice';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { RouteProp } from '@react-navigation/native';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 type Props = {
   navigation: HomeScreenNavigationProp;
+  route: GroceryScreen;
 };
+
+type GroceryScreen = RouteProp<RootStackParamList, 'GroceryRecipe'>;
+
 
 const { width } = Dimensions.get('window');
 
-const GroceryRecipeScreen: React.FC<Props> = ({ navigation }) => {
+const GroceryRecipeScreen: React.FC<Props> = ({ navigation, route }) => {
+  const {id} = route.params;
+  const{email} = route.params;
   const recipes = useSelector((state: RootState) => state.recipes.recipes);
   const [selectedRecipes, setSelectedRecipes] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -60,8 +67,10 @@ const GroceryRecipeScreen: React.FC<Props> = ({ navigation }) => {
     setDialogOpen(false);
     //Alert.alert('Grocery List', `Selected Recipes: ${selectedRecipes.join(', ')}\nServing Size: ${servingSize}`);
     navigation.navigate('GroceryList', {
+        email,
         selectedRecipes,
         servingSize,
+        id
       });
 };
 

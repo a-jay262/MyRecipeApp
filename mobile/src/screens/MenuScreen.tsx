@@ -20,8 +20,11 @@ import {
   Recipe,
   selectFilteredRecipes,
   fetchRecipes,
-  BASE_URL
+  BASE_URL,
+  saveRecipesToLocal,
+  getRecipesFromLocal,
 } from '../reducers/recipeSlice'; 
+import NetInfo from '@react-native-community/netinfo';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 type MenuScreenRouteProp = RouteProp<RootStackParamList, 'MenuScreen'>;
@@ -33,7 +36,7 @@ type Props = {
 
 const MenuScreen: React.FC<Props> = ({navigation, route}) => {
 
-  const {username, profilePicture, id} = route.params;
+  const {username, profilePicture, id, email} = route.params;
 
   const dispatch = useAppDispatch();
   const recipes2 = useSelector(selectFilteredRecipes);
@@ -55,6 +58,7 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
     /* your local image imports */
   ];
 
+
   const prevRecipe = () => {
     setActiveIndex(prevIndex =>
       prevIndex === 0 ? recipes2.length - 1 : prevIndex - 1,
@@ -75,9 +79,39 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
     return visibleRecipes;
   };
 
-  useEffect(() => {
-    dispatch(fetchRecipes());
-  }, [dispatch]);
+useEffect(() => {
+  dispatch(fetchRecipes());
+  saveRecipesToLocal(filteredRecipes);
+}, [dispatch, filteredRecipes]);
+
+const [isConnected, setIsConnected] = useState<boolean | null>(true);
+
+useEffect(() => {
+  const unsubscribe = NetInfo.addEventListener(state => {
+    setIsConnected(state.isConnected);
+  });
+
+  return () => unsubscribe();
+}, []);
+
+useEffect(() => {
+  if (!isConnected) {
+    getRecipesFromLocal();
+  }
+}, [isConnected]);
+
+useEffect(() => {
+  const checkAndFetchRecipes = async () => {
+    if (isConnected) {
+      dispatch(fetchRecipes());
+    } else {
+      const localRecipes = await getRecipesFromLocal();
+      setFilteredRecipes(localRecipes || []);
+    }
+  };
+  
+  checkAndFetchRecipes();
+}, [dispatch, isConnected]);
 
   useEffect(() => {
     const filteredImagesRecipes = recipes2.filter(
@@ -114,8 +148,8 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
   };
 
   const handleRecipeClick = (id: string) => {
-    navigation.navigate('SignUp');
     setDropdownVisible(false);
+    navigation.navigate('CookPage', {id});
   };
 
   const handleProfileClick = (id: string) => {
@@ -131,7 +165,7 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
   };
 
   const handleGrocery = () => {
-    navigation.navigate('GroceryRecipe');
+    navigation.navigate('GroceryRecipe', {id, email});
   };
 
   const renderItem = ({ item }: { item: Recipe }) => {
@@ -217,11 +251,14 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
           <TouchableOpacity style={styles.toggleButton} onPress={prevRecipe}>
             <Text>{'<'}</Text>
           </TouchableOpacity>
-
           <View style={styles.categoryImagesContainer}>
             <View style={styles.categoryImages}>
               {getVisibleRecipes().map((recipe, index) =>
                 recipe.image ? (
+                  <TouchableOpacity 
+              key={index} 
+              onPress={() => handleRecipeClick(recipe._id)} // Call handleClick with the recipe's id
+            >
                   <Image
                     key={index} 
                     source={{uri: `${BASE_URL}${recipe.image}`}}
@@ -239,6 +276,7 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
                     ]}
                     onError={() => console.log('Image failed to load')}
                   />
+                  </TouchableOpacity>
                 ) : null,
               )}
             </View>
@@ -254,12 +292,16 @@ const MenuScreen: React.FC<Props> = ({navigation, route}) => {
         <Text style={styles.famousRecipesTitle}>Most Famous Recipes</Text>
         <View style={styles.famousRecipesContainer}>
           {recipesWithImagesCook.length > 0 && (
+            <TouchableOpacity 
+            onPress={() => handleRecipeClick(recipesWithImagesCook[activeIndex2]._id)} // Call handleClick with the recipe's id
+          >
             <Image
               source={{
                 uri: `${BASE_URL}${recipesWithImagesCook[activeIndex2].image}`,
               }}
               style={styles.recipeImage2}
             />
+          </TouchableOpacity>
           )}
         </View>
       </View>

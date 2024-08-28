@@ -10,7 +10,7 @@ import {
 import axios from 'axios';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { BASE_URL, setTokenWithExpiration } from '../reducers/recipeSlice';
+import { BASE_URL, setTokenWithExpiration, BASE_URL2 } from '../reducers/recipeSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -23,6 +23,28 @@ const LogInScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleLogIn2 = async () => {
+    try {
+      const response2 = await  fetch(`${BASE_URL2}/api/auth/login`, { // Corrected endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response2.json();
+      if (data.success) {
+        // Navigate to MenuScreen with username, profilePicture, and userId
+        //Alert.alert("Wallet Login done");
+      } else {
+        Alert.alert(data.message); // Show error message
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      //Alert.alert('An error occurred during login 2. Please try again.');
+    }
+  };
+
   const handleLogIn = async () => {
     try {
       const response = await axios.post(`${BASE_URL}/auth/login`, {
@@ -31,6 +53,8 @@ const LogInScreen: React.FC<Props> = ({ navigation }) => {
       });
 
       if (response.data.success) {
+
+        handleLogIn2();
         const { accessToken, expiresIn, username, image, userId } = response.data;
         const imageUrl = `${BASE_URL}${image}`;
 
@@ -40,11 +64,13 @@ const LogInScreen: React.FC<Props> = ({ navigation }) => {
         // Store user details
         await AsyncStorage.setItem('token', accessToken);
         await AsyncStorage.setItem('username', username);
+        await AsyncStorage.setItem('email', email);
         await AsyncStorage.setItem('profilePicture', imageUrl);
         await AsyncStorage.setItem('userId', userId.toString());
 
         // Navigate to MenuScreen with username, profilePicture, and userId
         navigation.navigate('MenuScreen', {
+          email: email,
           username: username,
           profilePicture: imageUrl,
           id: userId.toString(), // Ensure userId is a string
@@ -54,7 +80,7 @@ const LogInScreen: React.FC<Props> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('An error occurred during login. Please try again.');
+      //Alert.alert('An error occurred during login. Please try again.');
     }
   };
 

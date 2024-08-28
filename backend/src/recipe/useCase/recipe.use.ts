@@ -24,7 +24,11 @@ export interface Ingredients {
 }
 
 
-
+/**
+ * A Random use case
+ * @param recipes 
+ * @returns 
+ */
 export const calculateTotalCookingTime = (recipes: Recipe[]): number => {
   return recipes.reduce((total, recipe) => total + recipe.size, 0);
 };

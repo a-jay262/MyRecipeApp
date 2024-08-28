@@ -19,14 +19,15 @@ export type RootStackParamList = {
   SignUp: undefined;
   LogIn: undefined;
   MenuScreen: {
+    email: string;
     username: string;
     profilePicture: string;
     id: string;
   };
   ListScreen: undefined;
   CookPage: { id: string };
-  GroceryRecipe: undefined;
-  GroceryList: {selectedRecipes: string[], servingSize: number};
+  GroceryRecipe: {id:string, email:string};
+  GroceryList: {selectedRecipes: string[], servingSize: number, id:string, email:string};
   AddRecipe: {id: string};
   ProfileScreen: {userId : string};
 };
